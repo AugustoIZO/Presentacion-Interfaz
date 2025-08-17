@@ -109,10 +109,17 @@ body {
 }
 
 .main-content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px;
+}
+
+/* Grid solo para las cards */
+.cards {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
     gap: 20px;
-    padding: 20px;
 }
 
 .card {
@@ -123,4 +130,234 @@ body {
     font-weight: bold;
     box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     cursor: pointer;
+}
+
+/* Ajustes específicos para la tabla de productos */
+.tabla-container {
+    padding: 20px;
+}
+
+table {
+width: 100%;
+border-collapse: collapse;
+background: white;
+border-radius: 12px;
+overflow: hidden;
+box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+th, td {
+padding: 12px 15px;
+text-align: center;
+}
+
+th {
+background-color: #354edb;
+color: white;
+font-weight: 600;
+}
+
+tr:nth-child(even) {
+background-color: #f9f9f9;
+}
+
+tr:hover {
+background-color: #eef2ff;
+transition: 0.2s ease-in-out;
+}
+
+/* --- VENTAS --- */
+.ventas-contenido {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 20px;
+    padding: 20px;
+}
+
+.venta-form, .venta-lista {
+    background: rgb(255, 255, 255);
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.venta-form h2, .venta-lista h2 {
+    margin-top: 0;
+    color: #354edb;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.form-group input, .form-group select {
+    height: 40px;
+    padding: 0 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    transition: all 0.3s ease;
+}
+
+.form-group input:focus, .form-group select:focus {
+    outline: none;
+    border-color: #354edb;
+    box-shadow: 0 0 5px rgba(53, 78, 219, 0.5);
+}
+
+.btn-guardar {
+    width: 100%;
+    height: 45px;
+    background: linear-gradient(90deg, #354edb, #5f78ff);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-guardar:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(53, 78, 219, 0.4);
+}
+
+.detalle-form {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.detalle-form input {
+    flex: 1;
+    height: 40px;
+    padding: 0 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+
+.btn-agregar {
+    background: #354edb;
+    color: white;
+    border: none;
+    padding: 0 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-agregar:hover {
+    background: #5f78ff;
+}
+
+.btn-eliminar {
+    background: #ff4b4b;
+    border: none;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn-eliminar:hover {
+    background: #e63939;
+}
+
+.venta-lista table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+.venta-lista th, .venta-lista td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    text-align: center;
+    font-size: 14px;
+}
+
+.venta-lista th {
+    background: #f0f2f5;
+    color: #354edb;
+}
+/* --- BOTÓN VOLVER --- */
+.btn-volver {
+    display: inline-block;
+    padding: 10px 18px;
+    background: linear-gradient(90deg, #191cda, lab(22.07% 55.15 -78.57));
+    color: white;
+    font-weight: bold;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-volver:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(53, 78, 219, 0.4);
+    background: linear-gradient(90deg, #2b3db8, #4c66e5);
+}
+/* Tarjetas resumen */
+.main-content .card {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    text-align: center;
+    font-weight: bold;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    cursor: pointer;
+    margin-bottom: 20px;
+}
+
+/* Tabla de reportes */
+.tabla-reporte {
+    width: 100%;
+    margin-top: 20px;
+    overflow-x: auto; /* seguridad en pantallas chicas */
+}
+
+.tabla-reporte table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.tabla-reporte th, .tabla-reporte td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    text-align: center;
+}
+
+.tabla-reporte th {
+    background-color: #354edb;
+    color: white;
+}
+
+.tabla-reporte tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+/* Botón volver */
+.btn-volver {
+    display: inline-block;
+    padding: 10px 18px;
+    background: linear-gradient(90deg, #354edb, #5f78ff);
+    color: white;
+    font-weight: bold;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    margin-bottom: 20px;
+}
+
+.btn-volver:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(53,78,219,0.4);
+    background: linear-gradient(90deg, #2b3db8, #4c66e5);
 }
