@@ -3,72 +3,101 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Libros - Alisbook</title>
     <link rel="stylesheet" href="../CSS/style.css">
-    <title>Alisbook - Inventario</title>
 </head>
-<body class="Inventario-body">
+<body class="main-body">
+
     <header class="top-bar">
-        <h1>📚 Alisbook</h1>
-        <button class="logout">Cerrar sesión</button>
+        <h1>📚 Gestión de Libros</h1>
+        <a href="main.html" class="btn-volver">🏠 Volver</a>
     </header>
 
-    <main class="inventario-content">
-        <div class="tabla-container">
+    <main class="ventas-contenido">
+        <!-- Caja de filtros -->
+        <section class="filtro-libros">
+            <h2>🔎 Filtrar Libros</h2>
+            <form>
+                <div class="form-group">
+                    <label for="filtro-titulo">Título</label>
+                    <input type="text" id="filtro-titulo" placeholder="Ej: El Principito">
+                </div>
+                <div class="form-group">
+                    <label for="filtro-autor">Autor</label>
+                    <input type="text" id="filtro-autor" placeholder="Ej: Antoine de Saint-Exupéry">
+                </div>
+                <div class="form-group">
+                    <label for="filtro-categoria">Categoría</label>
+                    <select id="filtro-categoria">
+                        <option value="">Todas</option>
+                        <option value="novela">Novela</option>
+                        <option value="fantasia">Fantasía</option>
+                        <option value="ciencia">Ciencia</option>
+                        <option value="historia">Historia</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="filtro-precio">Precio Máximo</label>
+                    <input type="number" id="filtro-precio" placeholder="0.00">
+                </div>
+                <button type="button" class="btn-filtrar">🔍 Buscar</button>
+            </form>
+        </section>
+
+        <!-- Formulario de libros -->
+        <section class="venta-form">
+            <h2>➕ Agregar / Editar Libro</h2>
+            <form>
+                <div class="form-group">
+                    <label for="titulo">Título</label>
+                    <input type="text" id="titulo" placeholder="Ej: Don Quijote de la Mancha">
+                </div>
+                <div class="form-group">
+                    <label for="autor">Autor</label>
+                    <input type="text" id="autor" placeholder="Ej: Miguel de Cervantes">
+                </div>
+                <div class="form-group">
+                    <label for="precio">Precio</label>
+                    <input type="number" id="precio" placeholder="0.00" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label for="stock">Stock</label>
+                    <input type="number" id="stock" min="0" placeholder="0">
+                </div>
+                <button type="button" class="btn-guardar">💾 Guardar Libro</button>
+            </form>
+        </section>
+
+        <!-- Tabla de libros -->
+        <section class="venta-lista">
+            <h2>📖 Lista de Libros</h2>
             <table>
                 <thead>
                     <tr>
-                        <th>IDPRODUCTO</th>
-                        <th>CODIGO</th>
-                        <th>NOMBRE</th>
-                        <th>DESCRIPCION</th>
-                        <th>STOCK</th>
-                        <th>PRECIO COMPRA</th>
-                        <th>PRECIO VENTA</th>
-                        <th>ESTADO</th>
-                        <th>FECHA REGISTRO</th>
-                        <th>ID CATEGORIA</th>
+                        <th>ID</th>
+                        <th>Título</th>
+                        <th>Autor</th>
+                        <th>Precio</th>
+                        <th>Stock</th>
+                        <th>Acción</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
                         <td>1</td>
-                        <td>001</td>
-                        <td>Birome</td>
-                        <td>Birome BIC</td>
-                        <td>50</td>
-                        <td>1000.00</td>
-                        <td>1700.00</td>
-                        <td>Activo</td>
-                        <td>16/07/2025</td>
-                        <td>1</td>
-                    </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>002</td>
-                        <td>Libro</td>
-                        <td>Libro de matematica</td>
-                        <td>30</td>
-                        <td>48000.00</td>
-                        <td>55000.00</td>
-                        <td>Activo</td>
-                        <td>27/06/2025</td>
-                        <td>2</td>
-                    </tr>
-                    <tr>
-                        <td>3</td>
-                        <td>003</td>
-                        <td>Libro</td>
-                        <td>Libro de lengua</td>
-                        <td>20</td>
-                        <td>25000.00</td>
-                        <td>30000.00</td>
-                        <td>Activo</td>
-                        <td>03/05/2025</td>
-                        <td>2</td>
+                        <td>Cien Años de Soledad</td>
+                        <td>Gabriel García Márquez</td>
+                        <td>$2500</td>
+                        <td>15</td>
+                        <td>
+                            <button class="btn-agregar">✏️ Editar</button>
+                            <button class="btn-eliminar">❌ Eliminar</button>
+                        </td>
                     </tr>
                 </tbody>
             </table>
-        </div>
+        </section>
     </main>
+
 </body>
 </html>
