@@ -48,6 +48,21 @@ body {
     transition: all 0.3s ease;
 }
 
+.rectangulo-usuario input,
+.rectangulo-password input {
+    width: 100%;
+    border: none;
+    background: transparent;
+    outline: none;
+    font-size: 14px;
+    font-family: 'Poppins', sans-serif;
+}
+
+.rectangulo-usuario input::placeholder,
+.rectangulo-password input::placeholder {
+    color: #666;
+}
+
 .rectangulo-usuario:hover,
 .rectangulo-password:hover {
     border-color: #a29bfe;
@@ -140,6 +155,22 @@ body {
     margin-bottom: 20px;
     color: #354edb;
     text-align: center;
+}
+
+.stat-number {
+    display: block;
+    font-size: 24px;
+    font-weight: bold;
+    color: #354edb;
+    margin-top: 5px;
+}
+
+.error-message {
+    background: #ffebee;
+    border: 1px solid #ffcdd2;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 15px;
 }
 
 /* Ajustes específicos para la tabla de productos */
