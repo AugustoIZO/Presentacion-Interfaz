@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "*.sql": "mysql"
+    },
+    "sql.dialect": "mysql",
+    "sql.format.keywordCase": "upper"
+}

@@ -1,3 +1,10 @@
+-- ============================================
+-- SCRIPT SQL PARA MYSQL
+-- Base de datos: ALISBOOK_BD
+-- ============================================
+-- @connection MySQL
+-- @database alisbook
+
 -- Base de datos ALISBOOK_BD
 CREATE DATABASE IF NOT EXISTS alisbook;
 USE alisbook;

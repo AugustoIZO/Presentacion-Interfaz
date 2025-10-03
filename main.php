@@ -31,7 +31,7 @@ if (isset($_GET['logout'])) {
         </div>
     </header>
 
-    <main class="main-content">
+    <main class="main-content dashboard">
         <div class="cards">
             <div class="card" onclick="location.href='inventario.php'">
                 <h3>📦 Inventario</h3>
