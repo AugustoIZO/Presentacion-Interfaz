@@ -234,9 +234,9 @@ $ventas = $db->query($sqlVentas)->fetchAll();
 </head>
 <body class="main-body">
     <header class="top-bar">
-        <h1>💰 Ventas - Alisbook</h1>
-        <div style="display: flex; align-items: center; gap: 15px;">
-            <a href="main.php" style="color: white; text-decoration: none;">🏠 Inicio</a>
+        <h1><a href="main.php" class="logo-link">💰 Ventas - Alisbook</a></h1>
+        <div class="header-nav">
+            <a href="main.php">🏠 Inicio</a>
             <span><?php echo htmlspecialchars($user['nombre']); ?></span>
             <a href="login.php?logout=1" class="logout">Cerrar sesión</a>
         </div>
@@ -316,11 +316,11 @@ $ventas = $db->query($sqlVentas)->fetchAll();
                     </div>
                     <div class="form-group">
                         <label>Cambio a Entregar:</label>
-                        <input type="text" id="montocambio" readonly placeholder="$0.00" style="background: #f8f9fa;">
+                        <input type="text" id="montocambio" readonly placeholder="$0.00" class="campo-cambio">
                     </div>
                 </div>
                 
-                <div style="text-align: center; margin-top: 20px;">
+                <div class="contenedor-botones">
                     <button type="submit" name="registrar_venta" class="btn-primary">Registrar Venta</button>
                     <button type="button" onclick="limpiarFormulario()" class="btn-secondary">Limpiar</button>
                 </div>
@@ -351,7 +351,7 @@ $ventas = $db->query($sqlVentas)->fetchAll();
                                 <td><?php echo htmlspecialchars($venta['IDVENTA']); ?></td>
                                 <td><?php echo htmlspecialchars($venta['TIPODOCUMENTO'] ?? 'N/A'); ?></td>
                                 <td><?php echo htmlspecialchars($venta['NOMBRECLIENTE'] ?? 'N/A'); ?></td>
-                                <td style="font-weight: bold; color: green;">
+                                <td class="total-destacado">
                                     $<?php echo number_format($venta['MONTOTOTAL'], 2); ?>
                                 </td>
                                 <td><?php echo htmlspecialchars($venta['usuario_nombre']); ?></td>
@@ -362,7 +362,7 @@ $ventas = $db->query($sqlVentas)->fetchAll();
                 </table>
             <?php endif; ?>
             
-            <div style="margin-top: 20px; text-align: center;">
+            <div class="contenedor-volver">
                 <button onclick="location.href='main.php'" class="btn-primary">
                     Volver al Menú Principal
                 </button>

@@ -43,7 +43,7 @@ if ($_POST) {
     <div class="background">
         <div class="rectangulo-caja">
             <?php if ($error): ?>
-                <div class="error-message" style="color: red; text-align: center; margin-bottom: 10px;">
+                <div class="error-message">
                     <?php echo htmlspecialchars($error); ?>
                 </div>
             <?php endif; ?>
@@ -61,14 +61,14 @@ if ($_POST) {
                 </div>
             </form>
             
-            <div style="margin-top: 20px; text-align: center; font-size: 12px; color: #666;">
+            <div class="info-adicional">
                 <p><strong>👤 Usuarios de prueba:</strong></p>
                 <p>📋 Doc: <strong>12345678</strong> | Pass: <strong>admin123</strong> (Administrador)</p>
                 <p>📋 Doc: <strong>87654321</strong> | Pass: <strong>empleado123</strong> (Empleado)</p>
                 <p>📋 Doc: <strong>11111111</strong> | Pass: <strong>maria123</strong> (Empleado)</p>
                 <br>
-                <p style="font-size: 10px; color: #999;">
-                    ⚠️ Ejecutar primero: <a href="setup_users.php" style="color: #007cba;">setup_users.php</a>
+                <p class="setup-link">
+                    ⚠️ Ejecutar primero: <a href="setup_users.php">setup_users.php</a>
                 </p>
             </div>
         </div>

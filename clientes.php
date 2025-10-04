@@ -22,9 +22,9 @@ $clientes = $db->query($sql)->fetchAll();
 </head>
 <body class="main-body">
     <header class="top-bar">
-        <h1>👥 Clientes - Alisbook</h1>
-        <div style="display: flex; align-items: center; gap: 15px;">
-            <a href="main.php" style="color: white; text-decoration: none;">🏠 Inicio</a>
+        <h1><a href="main.php" class="logo-link">👥 Clientes - Alisbook</a></h1>
+        <div class="header-nav">
+            <a href="main.php">🏠 Inicio</a>
             <span><?php echo htmlspecialchars($user['nombre']); ?></span>
             <a href="login.php?logout=1" class="logout">Cerrar sesión</a>
         </div>
@@ -58,7 +58,7 @@ $clientes = $db->query($sql)->fetchAll();
                                 <td><?php echo htmlspecialchars($cliente['CORREO'] ?? 'N/A'); ?></td>
                                 <td><?php echo htmlspecialchars($cliente['TELEFONO'] ?? 'N/A'); ?></td>
                                 <td>
-                                    <span style="color: <?php echo $cliente['ESTADO'] == 'Activo' ? 'green' : 'red'; ?>">
+                                    <span class="estado-<?php echo strtolower($cliente['ESTADO']); ?>">
                                         <?php echo $cliente['ESTADO']; ?>
                                     </span>
                                 </td>
@@ -69,8 +69,8 @@ $clientes = $db->query($sql)->fetchAll();
                 </table>
             <?php endif; ?>
             
-            <div style="margin-top: 20px; text-align: center;">
-                <button onclick="location.href='main.php'" style="background: #354edb; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">
+            <div class="contenedor-volver">
+                <button onclick="location.href='main.php'" class="btn-volver-main">
                     Volver al Menú Principal
                 </button>
             </div>

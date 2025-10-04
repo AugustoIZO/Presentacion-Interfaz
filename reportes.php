@@ -57,9 +57,9 @@ $stockBajo = $db->query("
 </head>
 <body class="main-body">
     <header class="top-bar">
-        <h1>📊 Reportes - Alisbook</h1>
-        <div style="display: flex; align-items: center; gap: 15px;">
-            <a href="main.php" style="color: white; text-decoration: none;">🏠 Inicio</a>
+        <h1><a href="main.php" class="logo-link">📊 Reportes - Alisbook</a></h1>
+        <div class="header-nav">
+            <a href="main.php">🏠 Inicio</a>
             <span><?php echo htmlspecialchars($user['nombre']); ?></span>
             <a href="login.php?logout=1" class="logout">Cerrar sesión</a>
         </div>
@@ -155,10 +155,10 @@ $stockBajo = $db->query("
                     </thead>
                     <tbody>
                         <?php foreach ($stockBajo as $producto): ?>
-                            <tr style="background-color: <?php echo $producto['STOCK'] == 0 ? '#ffebee' : '#fff3e0'; ?>">
+                            <tr class="<?php echo $producto['STOCK'] == 0 ? 'fila-agotado' : 'fila-bajo-stock'; ?>">
                                 <td><?php echo htmlspecialchars($producto['CODIGO']); ?></td>
                                 <td><?php echo htmlspecialchars($producto['NOMBRE']); ?></td>
-                                <td style="color: <?php echo $producto['STOCK'] == 0 ? 'red' : 'orange'; ?>; font-weight: bold;">
+                                <td class="<?php echo $producto['STOCK'] == 0 ? 'stock-agotado' : 'stock-bajo'; ?>">
                                     <?php echo $producto['STOCK']; ?>
                                 </td>
                             </tr>
@@ -166,12 +166,12 @@ $stockBajo = $db->query("
                     </tbody>
                 </table>
             <?php else: ?>
-                <p style="color: green;">✓ Todos los productos tienen stock suficiente.</p>
+                <p class="mensaje-stock-ok">✓ Todos los productos tienen stock suficiente.</p>
             <?php endif; ?>
         </div>
 
-        <div style="margin-top: 20px; text-align: center;">
-            <button onclick="location.href='main.php'" style="background: #354edb; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">
+        <div class="contenedor-volver">
+            <button onclick="location.href='main.php'" class="btn-volver-main">
                 Volver al Menú Principal
             </button>
         </div>

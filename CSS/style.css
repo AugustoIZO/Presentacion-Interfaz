@@ -99,28 +99,139 @@ body {
 }
 
 
-/* MAIN */
+/* ================================
+   HEADER MEJORADO PARA MAIN
+   ================================ */
+
 .main-body {
-    background-color: #f0f2f5;
+    background: linear-gradient(135deg, #f0f2f5 0%, #e8eef7 100%);
+    min-height: 100vh;
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
 }
 
 .top-bar {
-    background-color: #354edb;
+    background: linear-gradient(135deg, #354edb 0%, #5f78ff 100%);
     color: white;
-    padding: 15px 20px;
+    padding: 20px 30px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    box-shadow: 0 4px 20px rgba(53, 78, 219, 0.15);
+    position: relative;
+    overflow: hidden;
+}
+
+.top-bar::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, rgba(255,255,255,0.1) 0%, transparent 100%);
+    pointer-events: none;
+}
+
+.top-bar h1 {
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 700;
+    z-index: 1;
+    position: relative;
+}
+
+.logo-link {
+    background: linear-gradient(135deg, #ffffff 0%, #e0e7ff 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    display: inline-block;
+}
+
+.logo-link:hover {
+    transform: scale(1.05);
+    filter: drop-shadow(0 0 10px rgba(255,255,255,0.3));
+}
+
+.header-nav {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    z-index: 1;
+    position: relative;
+}
+
+.header-nav span {
+    font-weight: 500;
+    font-size: 1rem;
+    opacity: 0.95;
 }
 
 .logout {
-    background: #ff2e2e;
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
     border: none;
-    padding: 8px 15px;
-    border-radius: 5px;
+    padding: 10px 20px;
+    border-radius: 8px;
     color: white;
-    font-weight: bold;
+    font-weight: 600;
     cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.2);
+}
+
+.logout:hover {
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.3);
+}
+
+/* Responsive para header */
+@media (max-width: 768px) {
+    .top-bar {
+        padding: 15px 20px;
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+    
+    .top-bar h1 {
+        font-size: 1.6rem;
+    }
+    
+    .header-nav {
+        gap: 15px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .header-nav span {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .top-bar {
+        padding: 12px 15px;
+    }
+    
+    .top-bar h1 {
+        font-size: 1.4rem;
+    }
+    
+    .header-nav span {
+        font-size: 0.85rem;
+    }
+    
+    .logout {
+        padding: 8px 16px;
+        font-size: 0.9rem;
+    }
 }
 
 .main-content {
@@ -130,72 +241,229 @@ body {
     box-sizing: border-box;
 }
 
-/* Layout específico para main.php con cards */
+/* ================================
+   MAIN DASHBOARD STYLES MEJORADO
+   ================================ */
+
+/* Layout principal del dashboard */
 .main-content.dashboard {
     display: grid;
     grid-template-columns: 2fr 1fr;
-    gap: 5px;
-    padding: 5px;
+    gap: 30px;
+    padding: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
 }
 
-/* Responsive para main-content */
-@media (max-width: 1200px) {
-    .main-content {
-        max-width: 100%;
-        padding: 10px;
-    }
-    
-    .main-content.dashboard {
-        grid-template-columns: 1fr;
-        gap: 15px;
-        padding: 15px;
-    }
-}
-
-@media (max-width: 768px) {
-    .main-content {
-        padding: 8px;
-    }
-    
-    .main-content.dashboard {
-        padding: 10px;
-        gap: 10px;
-    }
-}
-
-
+/* Container de las cards principales */
 .cards {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 15px;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    margin-bottom: 20px;
 }
 
-.cards {
-    background: rgb(201, 201, 201);
-    padding: 20px;
-    border-radius: 20px;
+/* Estilos mejorados para las cards principales */
+.main-card {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    border: none;
+    border-radius: 16px;
+    padding: 30px 25px;
     text-align: center;
-    font-weight: bold;
-    box-shadow: 0 2px 6px rgba(254, 0, 0, 0.1);
     cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    position: relative;
+    overflow: hidden;
 }
 
+.main-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #354edb, #5f78ff);
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+}
+
+.main-card:hover::before {
+    transform: translateX(0);
+}
+
+.main-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 40px rgba(53, 78, 219, 0.15);
+}
+
+.main-card h3 {
+    font-size: 1.4rem;
+    margin: 0 0 12px 0;
+    background: linear-gradient(135deg, #354edb, #5f78ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 700;
+}
+
+.main-card p {
+    margin: 0;
+    color: #6b7280;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+/* Sección de resumen mejorada */
 .resumen {
-    margin-top: 5px;
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    border-radius: 20px;
+    padding: 25px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    height: fit-content;
 }
 
 .resumen h2 {
-    margin-bottom: 20px;
-    color: #354edb;
+    margin: 0 0 25px 0;
+    color: #1f2937;
     text-align: center;
+    font-size: 1.8rem;
+    font-weight: 700;
+    position: relative;
+}
+
+.resumen h2::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, #354edb, #5f78ff);
+    border-radius: 2px;
+}
+
+/* Cards de estadísticas */
+.stats-grid {
+    display: grid;
+    gap: 15px;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    border: 1px solid #e5e7eb;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #10b981, #34d399);
+}
+
+.stat-card:nth-child(2)::before {
+    background: linear-gradient(90deg, #3b82f6, #60a5fa);
+}
+
+.stat-card:nth-child(3)::before {
+    background: linear-gradient(90deg, #8b5cf6, #a78bfa);
+}
+
+.stat-card:nth-child(4)::before {
+    background: linear-gradient(90deg, #f59e0b, #fbbf24);
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.stat-card h4 {
+    margin: 0 0 10px 0;
+    color: #374151;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .stat-number {
     display: block;
-    font-size: 24px;
-    font-weight: bold;
-    color: #354edb;
-    margin-top: 5px;
+    font-size: 2rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #354edb, #5f78ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin: 0;
+    line-height: 1;
+}
+
+/* Responsive mejorado */
+@media (max-width: 1200px) {
+    .main-content.dashboard {
+        grid-template-columns: 1fr;
+        gap: 25px;
+        padding: 15px;
+    }
+    
+    .cards {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 15px;
+    }
+}
+
+@media (max-width: 768px) {
+    .main-content.dashboard {
+        padding: 10px;
+        gap: 20px;
+    }
+    
+    .cards {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+    
+    .main-card {
+        padding: 25px 20px;
+    }
+    
+    .main-card h3 {
+        font-size: 1.2rem;
+    }
+    
+    .resumen {
+        padding: 20px;
+    }
+    
+    .stat-number {
+        font-size: 1.6rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .main-card {
+        padding: 20px 15px;
+    }
+    
+    .main-card h3 {
+        font-size: 1.1rem;
+    }
+    
+    .resumen h2 {
+        font-size: 1.5rem;
+    }
 }
 
 .error-message {
@@ -739,5 +1007,882 @@ transition: 0.2s ease-in-out;
     .tabla-inventario td {
         padding: 8px 4px;
     }
+}
+
+/* ============================================ */
+/* ESTILOS PARA COMPRAS */
+/* ============================================ */
+
+/* Formulario de compras */
+.compra-form {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.compra-form h2 {
+    margin-top: 0;
+    color: #354edb;
+    margin-bottom: 20px;
+}
+
+/* Layout del formulario */
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #354edb;
+    font-size: 14px;
+}
+
+.form-group input, 
+.form-group select {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-group input:focus, 
+.form-group select:focus {
+    outline: none;
+    border-color: #354edb;
+    box-shadow: 0 0 0 2px rgba(53, 78, 219, 0.2);
+}
+
+/* Sección de productos */
+.productos-section {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 15px;
+    margin: 15px 0;
+    background: #f8f9fa;
+}
+
+.productos-section h3 {
+    margin-top: 0;
+    color: #354edb;
+    margin-bottom: 15px;
+}
+
+/* Encabezado de productos */
+.productos-header {
+    font-weight: bold;
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr auto;
+    gap: 10px;
+    padding: 5px 10px;
+    border-bottom: 2px solid #354edb;
+    margin-bottom: 10px;
+    background: white;
+    border-radius: 5px;
+}
+
+/* Items de productos */
+.producto-item {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr auto;
+    gap: 10px;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+    background: white;
+    margin-bottom: 5px;
+    border-radius: 5px;
+    transition: background-color 0.2s ease;
+}
+
+.producto-item:hover {
+    background-color: #f0f0f0;
+}
+
+.producto-item:last-child {
+    border-bottom: none;
+}
+
+.producto-item label {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.producto-item input[type="checkbox"] {
+    margin-top: 2px;
+}
+
+.producto-item input[type="number"] {
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    font-size: 13px;
+    text-align: center;
+}
+
+.producto-item input[type="number"]:disabled {
+    background-color: #f5f5f5;
+    color: #999;
+}
+
+.producto-item .subtotal {
+    font-weight: bold;
+    color: #354edb;
+    text-align: right;
+    padding: 5px;
+}
+
+/* Total de compra */
+.total-compra {
+    font-size: 18px;
+    font-weight: bold;
+    color: #354edb;
+    text-align: right;
+    margin: 15px 0;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 5px;
+    border-left: 4px solid #354edb;
+}
+
+/* Botones del formulario de compras */
+.btn-primary {
+    background: #354edb;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-right: 10px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.btn-primary:hover {
+    background: #2b3db8;
+    transform: translateY(-1px);
+}
+
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-secondary:hover {
+    background: #5a6268;
+}
+
+/* Mensajes de feedback */
+.mensaje-exito {
+    background: #d4edda;
+    border: 1px solid #c3e6cb;
+    color: #155724;
+    padding: 12px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    font-weight: bold;
+}
+
+.mensaje-error {
+    background: #f8d7da;
+    border: 1px solid #f5c6cb;
+    color: #721c24;
+    padding: 12px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    font-weight: bold;
+}
+
+/* Precio destacado en tablas */
+.precio-destacado {
+    font-weight: bold;
+    color: #354edb;
+}
+
+/* Responsive para compras */
+@media (max-width: 768px) {
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+    
+    .productos-header,
+    .producto-item {
+        grid-template-columns: 1fr;
+        gap: 5px;
+    }
+    
+    .productos-header {
+        display: none; /* Ocultar encabezado en móvil */
+    }
+    
+    .producto-item {
+        padding: 15px;
+        display: block;
+    }
+    
+    .producto-item > div:first-child {
+        margin-bottom: 10px;
+    }
+    
+    .producto-item input[type="number"] {
+        width: 100%;
+        margin-bottom: 5px;
+    }
+    
+    .total-compra {
+        font-size: 16px;
+        text-align: center;
+    }
+    
+    .compra-form {
+        padding: 15px;
+    }
+}
+
+@media (max-width: 1024px) and (min-width: 769px) {
+    .productos-header,
+    .producto-item {
+        grid-template-columns: 2fr 1fr 1fr 1fr;
+        font-size: 13px;
+    }
+    
+    .productos-header span:last-child,
+    .producto-item .subtotal {
+        display: none; /* Ocultar subtotal en tablets */
+    }
+}
+
+/* ============================================ */
+/* ESTILOS PARA INVENTARIO - FORMULARIO AGREGAR PRODUCTOS */
+/* ============================================ */
+
+/* Formulario para agregar productos */
+.inventario-form {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.inventario-form h3 {
+    margin-top: 0;
+    color: #354edb;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.btn-toggle-form {
+    background: linear-gradient(135deg, #354edb, #5f78ff);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(53, 78, 219, 0.2);
+}
+
+.btn-toggle-form:hover {
+    background: linear-gradient(135deg, #2b3db8, #4c66e5);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(53, 78, 219, 0.3);
+}
+
+.formulario-oculto {
+    display: none;
+}
+
+/* Grid layouts para formularios */
+.form-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.form-grid-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.form-group-full {
+    margin-bottom: 15px;
+}
+
+/* Estilos para campos de formulario mejorados */
+.form-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #354edb;
+    font-size: 14px;
+}
+
+.form-input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid #e1e5e9;
+    border-radius: 8px;
+    box-sizing: border-box;
+    font-size: 14px;
+    background: white;
+    transition: all 0.3s ease;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: #354edb;
+    box-shadow: 0 0 0 3px rgba(53, 78, 219, 0.1);
+    background: #fafbfc;
+}
+
+.form-input::placeholder {
+    color: #9ca3af;
+    font-style: italic;
+    opacity: 1;
+}
+
+.form-textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid #e1e5e9;
+    border-radius: 8px;
+    resize: vertical;
+    box-sizing: border-box;
+    font-family: inherit;
+    font-size: 14px;
+    background: white;
+    transition: all 0.3s ease;
+    min-height: 80px;
+}
+
+.form-textarea:focus {
+    outline: none;
+    border-color: #354edb;
+    box-shadow: 0 0 0 3px rgba(53, 78, 219, 0.1);
+    background: #fafbfc;
+}
+
+.form-textarea::placeholder {
+    color: #9ca3af;
+    font-style: italic;
+    opacity: 1;
+}
+
+.form-select {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid #e1e5e9;
+    border-radius: 8px;
+    box-sizing: border-box;
+    background: white;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 12px center;
+    background-repeat: no-repeat;
+    background-size: 16px;
+}
+
+.form-select:focus {
+    outline: none;
+    border-color: #354edb;
+    box-shadow: 0 0 0 3px rgba(53, 78, 219, 0.1);
+}
+
+/* Texto pequeño de ayuda mejorado */
+.form-help-text {
+    color: #6b7280;
+    font-size: 12px;
+    margin-top: 5px;
+    font-style: italic;
+    line-height: 1.4;
+}
+
+/* Botones de acción en formularios mejorados */
+.btn-success {
+    background: linear-gradient(135deg, #28a745, #34ce57);
+    color: white;
+    border: none;
+    padding: 14px 28px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    margin-right: 10px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.2);
+    border: 2px solid transparent;
+}
+
+.btn-success:hover {
+    background: linear-gradient(135deg, #218838, #28a745);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(40, 167, 69, 0.3);
+}
+
+.btn-success:active {
+    transform: translateY(0);
+}
+
+.btn-clean {
+    background: linear-gradient(135deg, #6c757d, #868e96);
+    color: white;
+    border: none;
+    padding: 14px 28px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(108, 117, 125, 0.2);
+}
+
+.btn-clean:hover {
+    background: linear-gradient(135deg, #5a6268, #6c757d);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(108, 117, 125, 0.3);
+}
+
+.btn-clean:active {
+    transform: translateY(0);
+}
+
+.btn-clean:hover {
+    background: #5a6268;
+}
+
+/* Contenedor de botones del formulario */
+.contenedor-boton-volver {
+    text-align: center;
+    margin-top: 20px;
+}
+
+/* ============================================ */
+/* ESTILOS PARA FILTROS DE INVENTARIO */
+/* ============================================ */
+
+/* Contenedor principal de filtros */
+.filtros-inventario {
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+/* Grid de filtros */
+.filtros-inventario-container {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+/* Campo de búsqueda */
+.filtro-busqueda {
+    flex: 1;
+    min-width: 300px;
+}
+
+.filtro-busqueda input {
+    width: 100%;
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+    background: white;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.filtro-busqueda input:focus {
+    outline: none;
+    border-color: #354edb;
+    box-shadow: 0 0 0 3px rgba(53, 78, 219, 0.1);
+}
+
+.filtro-busqueda input::placeholder {
+    color: #999;
+    font-style: italic;
+}
+
+/* Selectores de filtro */
+.filtro-categoria select,
+.filtro-stock select {
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+    background: white;
+    cursor: pointer;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    min-width: 150px;
+}
+
+.filtro-categoria select:focus,
+.filtro-stock select:focus {
+    outline: none;
+    border-color: #354edb;
+    box-shadow: 0 0 0 3px rgba(53, 78, 219, 0.1);
+}
+
+/* Botón limpiar filtros */
+.btn-limpiar-filtros {
+    background: #6c757d;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    white-space: nowrap;
+}
+
+.btn-limpiar-filtros:hover {
+    background: #5a6268;
+    transform: translateY(-1px);
+}
+
+/* Resultados de búsqueda */
+.resultados-busqueda {
+    margin-top: 15px;
+    font-size: 14px;
+    color: #666;
+    font-style: italic;
+}
+
+/* ============================================ */
+/* ESTILOS PARA TABLA DE INVENTARIO */
+/* ============================================ */
+
+/* Contenedor de tabla */
+.tabla-inventario {
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+}
+
+.tabla-inventario h3 {
+    background: #354edb;
+    color: white;
+    margin: 0;
+    padding: 15px 20px;
+    font-size: 18px;
+}
+
+.tabla-inventario table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.tabla-inventario th {
+    background: #f8f9fa;
+    padding: 12px;
+    text-align: left;
+    font-weight: bold;
+    color: #354edb;
+    border-bottom: 2px solid #354edb;
+    font-size: 14px;
+}
+
+.tabla-inventario td {
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+    font-size: 14px;
+}
+
+.tabla-inventario tbody tr:hover {
+    background: #f8f9fa;
+}
+
+/* Estados de stock mejorados */
+.stock-bueno {
+    color: #28a745;
+    font-weight: 600;
+}
+
+.stock-regular {
+    color: #fd7e14;
+    font-weight: 600;
+}
+
+.stock-critico {
+    color: #dc3545;
+    font-weight: 600;
+}
+
+.disponible {
+    color: #28a745;
+    font-weight: 500;
+}
+
+.agotado {
+    color: #dc3545;
+    font-weight: 500;
+}
+
+/* Mensaje sin resultados */
+.sin-resultados {
+    text-align: center;
+    padding: 20px;
+    color: #666;
+    font-style: italic;
+}
+
+/* ============================================ */
+/* BOTONES DE NAVEGACIÓN MEJORADOS */
+/* ============================================ */
+
+/* Contenedor botón volver */
+.contenedor-volver {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.btn-volver-main {
+    background: linear-gradient(135deg, #354edb, #5f78ff);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(53, 78, 219, 0.2);
+}
+
+.btn-volver-main:hover {
+    background: linear-gradient(135deg, #2b3db8, #4c66e5);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(53, 78, 219, 0.3);
+}
+
+/* Header elements */
+.header-flex {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.header-link {
+    color: white;
+    text-decoration: none;
+    transition: opacity 0.3s ease;
+}
+
+.header-link:hover {
+    opacity: 0.8;
+}
+
+/* Responsive para formularios de inventario mejorado */
+@media (max-width: 768px) {
+    .form-grid-2,
+    .form-grid-3 {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .inventario-form {
+        padding: 15px;
+        margin-bottom: 15px;
+    }
+    
+    .inventario-form h3 {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    
+    .btn-success,
+    .btn-clean {
+        width: 100%;
+        margin-bottom: 10px;
+        margin-right: 0;
+        padding: 16px;
+    }
+    
+    .filtros-inventario-container {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+    
+    .filtro-busqueda {
+        min-width: unset;
+    }
+    
+    .filtro-categoria select,
+    .filtro-stock select {
+        min-width: unset;
+        width: 100%;
+    }
+    
+    .tabla-inventario {
+        overflow-x: auto;
+        margin-bottom: 15px;
+    }
+    
+    .tabla-inventario table {
+        min-width: 600px;
+    }
+}
+
+@media (max-width: 480px) {
+    .inventario-form {
+        padding: 12px;
+    }
+    
+    .form-input,
+    .form-textarea,
+    .form-select {
+        padding: 10px 12px;
+        font-size: 16px; /* Evitar zoom en iOS */
+    }
+    
+    .filtro-busqueda input {
+        padding: 12px;
+        font-size: 16px; /* Evitar zoom en iOS */
+    }
+    
+    .btn-success,
+    .btn-clean {
+        padding: 14px;
+        font-size: 15px;
+    }
+}
+
+/* ================================
+   CLIENTES STYLES
+   ================================ */
+
+/* Header navigation */
+.header-nav {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.header-nav a {
+    color: white;
+    text-decoration: none;
+}
+
+/* Estados de cliente */
+.estado-activo {
+    color: green;
+}
+
+.estado-inactivo {
+    color: red;
+}
+
+/* ================================
+   VENTAS STYLES  
+   ================================ */
+
+/* Campo de cambio */
+.campo-cambio {
+    background: #f8f9fa;
+}
+
+/* Contenedor de botones centrado */
+.contenedor-botones {
+    text-align: center;
+    margin-top: 20px;
+}
+
+/* Total destacado */
+.total-destacado {
+    font-weight: bold;
+    color: green;
+}
+
+/* ================================
+   REPORTES STYLES  
+   ================================ */
+
+/* Filas de stock crítico */
+.fila-agotado {
+    background-color: #ffebee;
+}
+
+.fila-bajo-stock {
+    background-color: #fff3e0;
+}
+
+/* Estados de stock en reportes */
+.stock-agotado {
+    color: red;
+    font-weight: bold;
+}
+
+.stock-bajo {
+    color: orange;
+    font-weight: bold;
+}
+
+/* Mensaje de stock suficiente */
+.mensaje-stock-ok {
+    color: green;
+}
+
+/* ================================
+   LOGIN EXTRAS  
+   ================================ */
+
+/* Mensaje de error */
+.error-message {
+    color: red;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+/* Información adicional */
+.info-adicional {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 12px;
+    color: #666;
+}
+
+.setup-link {
+    font-size: 10px;
+    color: #999;
+}
+
+.setup-link a {
+    color: #007cba;
 }
 

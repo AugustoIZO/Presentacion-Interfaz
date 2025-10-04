@@ -94,9 +94,9 @@ $categorias = $db->query($sqlCategorias)->fetchAll();
 </head>
 <body class="main-body">
     <header class="top-bar">
-        <h1>📦 Inventario - Alisbook</h1>
-        <div style="display: flex; align-items: center; gap: 15px;">
-            <a href="main.php" style="color: white; text-decoration: none;">🏠 Inicio</a>
+        <h1><a href="main.php" class="logo-link">📦 Inventario - Alisbook</a></h1>
+        <div class="header-flex">
+            <a href="main.php" class="header-link">🏠 Inicio</a>
             <span><?php echo htmlspecialchars($user['nombre']); ?></span>
             <a href="login.php?logout=1" class="logout">Cerrar sesión</a>
         </div>
@@ -105,48 +105,44 @@ $categorias = $db->query($sqlCategorias)->fetchAll();
     <main class="main-content">
         <!-- Mensajes de feedback -->
         <?php if ($mensaje): ?>
-            <div style="background: #d4edda; border: 1px solid #c3e6cb; color: #155724; padding: 10px; border-radius: 5px; margin-bottom: 15px;">
-                <?php echo $mensaje; ?>
-            </div>
+            <div class="mensaje-exito"><?php echo $mensaje; ?></div>
         <?php endif; ?>
         
         <?php if ($error): ?>
-            <div style="background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; padding: 10px; border-radius: 5px; margin-bottom: 15px;">
-                <?php echo $error; ?>
-            </div>
+            <div class="mensaje-error"><?php echo $error; ?></div>
         <?php endif; ?>
 
         <!-- Formulario para agregar productos -->
-        <div style="background: white; padding: 20px; border-radius: 10px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
-            <h3 style="margin-top: 0; color: #354edb; display: flex; align-items: center; gap: 10px;">
+        <div class="inventario-form">
+            <h3>
                 <span>➕ Agregar Nuevo Producto</span>
-                <button type="button" id="toggleForm" style="background: #354edb; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; font-size: 12px;">
-                    Mostrar/Ocultar
+                <button type="button" id="toggleForm" class="btn-toggle-form">
+                    Mostrar
                 </button>
             </h3>
             
-            <form method="POST" id="formAgregarProducto" style="display: none;">
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+            <form method="POST" id="formAgregarProducto" class="formulario-oculto">
+                <div class="form-grid-2">
                     <div>
-                        <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #354edb;">Código del Producto:</label>
-                        <input type="text" name="codigo" placeholder="Ej: LIB001" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box;">
-                        <small style="color: #666;">Opcional - Se puede dejar vacío</small>
+                        <label class="form-label">Código del Producto:</label>
+                        <input type="text" name="codigo" placeholder="Ej: LIB001" class="form-input">
+                        <small class="form-help-text">Opcional - Se puede dejar vacío</small>
                     </div>
                     <div>
-                        <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #354edb;">Nombre del Producto: *</label>
-                        <input type="text" name="nombre" required placeholder="Ej: Cien años de soledad" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box;">
+                        <label class="form-label">Nombre del Producto: *</label>
+                        <input type="text" name="nombre" required placeholder="Ej: Cien años de soledad" class="form-input">
                     </div>
                 </div>
                 
-                <div style="margin-bottom: 15px;">
-                    <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #354edb;">Descripción:</label>
-                    <textarea name="descripcion" rows="3" placeholder="Descripción detallada del producto..." style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 5px; resize: vertical; box-sizing: border-box;"></textarea>
+                <div class="form-group-full">
+                    <label class="form-label">Descripción:</label>
+                    <textarea name="descripcion" rows="3" placeholder="Descripción detallada del producto..." class="form-textarea"></textarea>
                 </div>
                 
-                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                <div class="form-grid-3">
                     <div>
-                        <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #354edb;">Categoría: *</label>
-                        <select name="idcategoria" required style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box;">
+                        <label class="form-label">Categoría: *</label>
+                        <select name="idcategoria" required class="form-select">
                             <option value="">Seleccionar categoría</option>
                             <?php foreach ($categorias as $categoria): ?>
                                 <option value="<?php echo $categoria['IDCATEGORIA']; ?>">
@@ -156,26 +152,26 @@ $categorias = $db->query($sqlCategorias)->fetchAll();
                         </select>
                     </div>
                     <div>
-                        <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #354edb;">Stock Inicial: *</label>
-                        <input type="number" name="stock" min="0" required placeholder="0" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box;">
+                        <label class="form-label">Stock Inicial: *</label>
+                        <input type="number" name="stock" min="0" required placeholder="0" class="form-input">
                     </div>
                     <div>
-                        <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #354edb;">Precio de Compra: *</label>
-                        <input type="number" name="preciocompra" step="0.01" min="0" required placeholder="0.00" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box;">
+                        <label class="form-label">Precio de Compra: *</label>
+                        <input type="number" name="preciocompra" step="0.01" min="0" required placeholder="0.00" class="form-input">
                     </div>
                 </div>
                 
-                <div style="margin-bottom: 20px;">
-                    <label style="display: block; margin-bottom: 5px; font-weight: bold; color: #354edb;">Precio de Venta: *</label>
-                    <input type="number" name="precioventa" step="0.01" min="0" required placeholder="0.00" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box;">
-                    <small style="color: #666;">Debe ser mayor al precio de compra</small>
+                <div class="form-group-full">
+                    <label class="form-label">Precio de Venta: *</label>
+                    <input type="number" name="precioventa" step="0.01" min="0" required placeholder="0.00" class="form-input">
+                    <small class="form-help-text">Debe ser mayor al precio de compra</small>
                 </div>
                 
-                <div style="text-align: center;">
-                    <button type="submit" name="agregar_producto" style="background: #28a745; color: white; border: none; padding: 12px 25px; border-radius: 5px; cursor: pointer; font-size: 16px; font-weight: bold; margin-right: 10px;">
+                <div class="contenedor-boton-volver">
+                    <button type="submit" name="agregar_producto" class="btn-success">
                         ➕ Agregar Producto
                     </button>
-                    <button type="button" onclick="limpiarFormulario()" style="background: #6c757d; color: white; border: none; padding: 12px 25px; border-radius: 5px; cursor: pointer; font-size: 16px;">
+                    <button type="button" onclick="limpiarFormulario()" class="btn-clean">
                         🗑️ Limpiar
                     </button>
                 </div>
@@ -186,14 +182,13 @@ $categorias = $db->query($sqlCategorias)->fetchAll();
             <h2>Lista de Productos</h2>
             
             <!-- Buscador de productos -->
-            <div style="margin-bottom: 20px;">
-                <div style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
-                    <div style="flex: 1; min-width: 300px;">
-                        <input type="text" id="buscadorProductos" placeholder="🔍 Buscar por nombre, código, descripción o categoría..." 
-                               style="width: 100%; padding: 5px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px;">
+            <div class="filtros-inventario">
+                <div class="filtros-inventario-container">
+                    <div class="filtro-busqueda">
+                        <input type="text" id="buscadorProductos" placeholder="🔍 Buscar por nombre, código, descripción o categoría...">
                     </div>
-                    <div>
-                        <select id="filtroCategoria" style="padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px;">
+                    <div class="filtro-categoria">
+                        <select id="filtroCategoria">
                             <option value="">Todas las categorías</option>
                             <?php 
                             $categorias = array_unique(array_column($productos, 'categoria_nombre'));
@@ -203,19 +198,19 @@ $categorias = $db->query($sqlCategorias)->fetchAll();
                             <?php endif; endforeach; ?>
                         </select>
                     </div>
-                    <div>
-                        <select id="filtroStock" style="padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px;">
+                    <div class="filtro-stock">
+                        <select id="filtroStock">
                             <option value="">Todo el stock</option>
                             <option value="disponible">Disponible (>0)</option>
                             <option value="agotado">Agotado (0)</option>
                             <option value="bajo">Stock bajo (≤5)</option>
                         </select>
                     </div>
-                    <button onclick="limpiarFiltros()" style="background: #6c757d; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer;">
+                    <button onclick="limpiarFiltros()" class="btn-limpiar-filtros">
                         Limpiar
                     </button>
                 </div>
-                <div id="resultadosBusqueda" style="margin-top: 10px; font-size: 14px; color: #666;"></div>
+                <div id="resultadosBusqueda" class="resultados-busqueda"></div>
             </div>
             
             <?php if (empty($productos)): ?>
@@ -246,15 +241,15 @@ $categorias = $db->query($sqlCategorias)->fetchAll();
                                 <td>$<?php echo number_format($producto['PRECIOCOMPRA'], 2); ?></td>
                                 <td>$<?php echo number_format($producto['PRECIOVENTA'], 2); ?></td>
                                 <td>
-                                    <span style="color: <?php echo $producto['STOCK'] > 5 ? 'green' : ($producto['STOCK'] > 0 ? 'orange' : 'red'); ?>">
+                                    <span class="stock-<?php echo $producto['STOCK'] > 5 ? 'bueno' : ($producto['STOCK'] > 0 ? 'regular' : 'critico'); ?>">
                                         <?php echo $producto['STOCK']; ?>
                                     </span>
                                 </td>
                                 <td>
                                     <?php if ($producto['STOCK'] > 0): ?>
-                                        <span style="color: green;">✓ Disponible</span>
+                                        <span class="disponible">✓ Disponible</span>
                                     <?php else: ?>
-                                        <span style="color: red;">✗ Agotado</span>
+                                        <span class="agotado">✗ Agotado</span>
                                     <?php endif; ?>
                                 </td>
                             </tr>
@@ -263,8 +258,8 @@ $categorias = $db->query($sqlCategorias)->fetchAll();
                 </table>
             <?php endif; ?>
             
-            <div style="margin-top: 20px; text-align: center;">
-                <button onclick="location.href='main.php'" style="background: #354edb; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">
+            <div class="contenedor-volver">
+                <button onclick="location.href='main.php'" class="btn-volver-main">
                     Volver al Menú Principal
                 </button>
             </div>
@@ -281,7 +276,7 @@ $categorias = $db->query($sqlCategorias)->fetchAll();
             const tbody = document.getElementById('tablaProductosBody');
             
             if (productosAMostrar.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 20px; color: #666;">No se encontraron productos que coincidan con los filtros.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="9" class="sin-resultados">No se encontraron productos que coincidan con los filtros.</td></tr>';
                 return;
             }
             
@@ -295,14 +290,14 @@ $categorias = $db->query($sqlCategorias)->fetchAll();
                     <td>$${parseFloat(producto.PRECIOCOMPRA || 0).toFixed(2)}</td>
                     <td>$${parseFloat(producto.PRECIOVENTA || 0).toFixed(2)}</td>
                     <td>
-                        <span style="color: ${producto.STOCK > 5 ? 'green' : (producto.STOCK > 0 ? 'orange' : 'red')}">
+                        <span class="stock-${producto.STOCK > 5 ? 'bueno' : (producto.STOCK > 0 ? 'regular' : 'critico')}">
                             ${producto.STOCK}
                         </span>
                     </td>
                     <td>
                         ${producto.STOCK > 0 
-                            ? '<span style="color: green;">✓ Disponible</span>' 
-                            : '<span style="color: red;">✗ Agotado</span>'
+                            ? '<span class="disponible">✓ Disponible</span>' 
+                            : '<span class="agotado">✗ Agotado</span>'
                         }
                     </td>
                 </tr>
@@ -390,12 +385,16 @@ $categorias = $db->query($sqlCategorias)->fetchAll();
         // Toggle mostrar/ocultar formulario
         document.getElementById('toggleForm').addEventListener('click', function() {
             const form = document.getElementById('formAgregarProducto');
-            if (form.style.display === 'none') {
-                form.style.display = 'block';
-                this.textContent = 'Ocultar';
+            const boton = this;
+            
+            if (form.classList.contains('formulario-oculto')) {
+                // Mostrar formulario
+                form.classList.remove('formulario-oculto');
+                boton.textContent = 'Ocultar';
             } else {
-                form.style.display = 'none';
-                this.textContent = 'Mostrar';
+                // Ocultar formulario
+                form.classList.add('formulario-oculto');
+                boton.textContent = 'Mostrar';
             }
         });
 

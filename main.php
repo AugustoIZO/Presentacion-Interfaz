@@ -23,8 +23,8 @@ if (isset($_GET['logout'])) {
 </head>
 <body class="main-body">
     <header class="top-bar">
-        <h1>📚 Alisbook</h1>
-        <div style="display: flex; align-items: center; gap: 15px;">
+        <h1><a href="main.php" class="logo-link">📚 Alisbook</a></h1>
+        <div class="header-nav">
             <span>Bienvenido, <?php echo htmlspecialchars($user['nombre']); ?> 
                 (<?php echo ucfirst($user['rol']); ?>)</span>
             <a href="?logout=1" class="logout">Cerrar sesión</a>
@@ -33,26 +33,30 @@ if (isset($_GET['logout'])) {
 
     <main class="main-content dashboard">
         <div class="cards">
-            <div class="card" onclick="location.href='inventario.php'">
+            <div class="main-card" onclick="location.href='inventario.php'">
                 <h3>📦 Inventario</h3>
-                <p>Gestionar productos y stock</p>
+                <p>Gestionar productos y controlar stock</p>
             </div>
-            <div class="card" onclick="location.href='clientes.php'">
+            <div class="main-card" onclick="location.href='clientes.php'">
                 <h3>👥 Clientes</h3>
-                <p>Administrar clientes</p>
+                <p>Administrar información de clientes</p>
             </div>
-            <div class="card" onclick="location.href='ventas.php'">
+            <div class="main-card" onclick="location.href='ventas.php'">
                 <h3>💰 Ventas</h3>
-                <p>Registrar y ver ventas</p>
+                <p>Registrar y gestionar ventas</p>
             </div>
-            <div class="card" onclick="location.href='reportes.php'">
+            <div class="main-card" onclick="location.href='compras.php'">
+                <h3>🛒 Compras</h3>
+                <p>Comprar productos a proveedores</p>
+            </div>
+            <div class="main-card" onclick="location.href='reportes.php'">
                 <h3>📊 Reportes</h3>
-                <p>Estadísticas y reportes</p>
+                <p>Estadísticas y análisis de datos</p>
             </div>
         </div>
 
         <div class="resumen">
-            <h2>Resumen</h2>
+            <h2>📈 Dashboard</h2>
             <?php
             require_once 'config/database.php';
             $db = new Database();
@@ -64,37 +68,76 @@ if (isset($_GET['logout'])) {
             $ingresosMes = $db->query("SELECT COALESCE(SUM(MONTOTOTAL), 0) as total FROM VENTAS WHERE MONTH(FECHAREGISTRO) = MONTH(CURRENT_DATE()) AND YEAR(FECHAREGISTRO) = YEAR(CURRENT_DATE())")->fetch()['total'];
             ?>
             
-            <div class="card">
-                <h4>Total Ventas</h4>
-                <span class="stat-number"><?php echo $totalVentas; ?></span>
-            </div>
-            <div class="card">
-                <h4>Clientes Activos</h4>
-                <span class="stat-number"><?php echo $clientesActivos; ?></span>
-            </div>
-            <div class="card">
-                <h4>Productos en Stock</h4>
-                <span class="stat-number"><?php echo $productosStock; ?></span>
-            </div>
-            <div class="card">
-                <h4>Ingresos Mensuales</h4>
-                <span class="stat-number">$<?php echo number_format($ingresosMes, 2); ?></span>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h4>Total Ventas</h4>
+                    <span class="stat-number"><?php echo $totalVentas; ?></span>
+                </div>
+                <div class="stat-card">
+                    <h4>Clientes Activos</h4>
+                    <span class="stat-number"><?php echo $clientesActivos; ?></span>
+                </div>
+                <div class="stat-card">
+                    <h4>Productos en Stock</h4>
+                    <span class="stat-number"><?php echo $productosStock; ?></span>
+                </div>
+                <div class="stat-card">
+                    <h4>Ingresos del Mes</h4>
+                    <span class="stat-number">$<?php echo number_format($ingresosMes, 2); ?></span>
+                </div>
             </div>
         </div>
     </main>
 
     <script>
-        // Hacer las cards clickeables
-        document.querySelectorAll('.card[onclick]').forEach(card => {
+        // Animaciones mejoradas para las cards
+        document.querySelectorAll('.main-card[onclick]').forEach(card => {
             card.style.cursor = 'pointer';
-            card.style.transition = 'transform 0.2s';
             
+            // Animación suave al hacer hover
             card.addEventListener('mouseenter', function() {
-                this.style.transform = 'scale(1.05)';
+                this.style.transform = 'translateY(-8px)';
             });
             
             card.addEventListener('mouseleave', function() {
-                this.style.transform = 'scale(1)';
+                this.style.transform = 'translateY(0)';
+            });
+            
+            // Efecto al hacer click
+            card.addEventListener('mousedown', function() {
+                this.style.transform = 'translateY(-4px) scale(0.98)';
+            });
+            
+            card.addEventListener('mouseup', function() {
+                this.style.transform = 'translateY(-8px)';
+            });
+        });
+
+        // Animación de entrada para las estadísticas
+        document.addEventListener('DOMContentLoaded', function() {
+            const statCards = document.querySelectorAll('.stat-card');
+            statCards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    card.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+            
+            // Animación para las cards principales
+            const mainCards = document.querySelectorAll('.main-card');
+            mainCards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                
+                setTimeout(() => {
+                    card.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 150);
             });
         });
     </script>
