@@ -23,7 +23,6 @@ class Auth {
         
         // Comparación directa de contraseña (sin hash)
         if ($password === $user['CLAVE']) {
-            // Crear sesión
             $_SESSION['user_id'] = $user['IDUSUARIO'];
             $_SESSION['documento'] = $user['DOCUMENTO'];
             $_SESSION['nombre'] = $user['NOMBRECOMPLETO'];

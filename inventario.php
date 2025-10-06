@@ -471,19 +471,27 @@ $categorias = $db->query($sqlCategorias)->fetchAll();
         const productos = <?php echo json_encode($productos); ?>;
         let productosFiltrados = [...productos];
 
+        // Función para normalizar texto (remover tildes y caracteres especiales)
+        function normalizarTexto(texto) {
+            if (!texto) return '';
+            return texto.toLowerCase()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, ''); // Remover tildes y diacríticos
+        }
+
         // Función de filtrado
         function filtrarProductos() {
-            const textoBusqueda = document.getElementById('buscadorProductos').value.toLowerCase();
+            const textoBusqueda = normalizarTexto(document.getElementById('buscadorProductos').value);
             const categoriaSeleccionada = document.getElementById('filtroCategoria').value;
             const stockSeleccionado = document.getElementById('filtroStock').value;
             
             productosFiltrados = productos.filter(producto => {
                 // Filtro por texto (nombre, código, descripción, categoría)
                 const coincideTexto = !textoBusqueda || 
-                    (producto.NOMBRE && producto.NOMBRE.toLowerCase().includes(textoBusqueda)) ||
-                    (producto.CODIGO && producto.CODIGO.toLowerCase().includes(textoBusqueda)) ||
-                    (producto.DESCRIPCION && producto.DESCRIPCION.toLowerCase().includes(textoBusqueda)) ||
-                    (producto.categoria_nombre && producto.categoria_nombre.toLowerCase().includes(textoBusqueda));
+                    (producto.NOMBRE && normalizarTexto(producto.NOMBRE).includes(textoBusqueda)) ||
+                    (producto.CODIGO && normalizarTexto(producto.CODIGO).includes(textoBusqueda)) ||
+                    (producto.DESCRIPCION && normalizarTexto(producto.DESCRIPCION).includes(textoBusqueda)) ||
+                    (producto.categoria_nombre && normalizarTexto(producto.categoria_nombre).includes(textoBusqueda));
                 
                 // Filtro por categoría
                 const coincideCategoria = !categoriaSeleccionada || 
