@@ -262,9 +262,6 @@ $categorias = $db->query($sqlCategorias)->fetchAll();
                     <button type="submit" name="agregar_producto" class="btn-success">
                         ➕ Agregar Producto
                     </button>
-                    <button type="button" onclick="limpiarFormulario()" class="btn-clean">
-                        🗑️ Limpiar
-                    </button>
                 </div>
             </form>
         </div>

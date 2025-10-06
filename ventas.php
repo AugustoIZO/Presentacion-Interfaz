@@ -150,13 +150,18 @@ $sqlProductos = "SELECT p.*, c.DESCRIPCION as categoria
                 ORDER BY p.NOMBRE";
 $productos = $db->query($sqlProductos)->fetchAll();
 
-// Obtener ventas recientes
-$sqlVentas = "SELECT v.*, u.NOMBRECOMPLETO as usuario_nombre 
+// Obtener ventas recientes con detalles de productos
+$sqlVentas = "SELECT v.*, u.NOMBRECOMPLETO as usuario_nombre,
+              GROUP_CONCAT(CONCAT(p.NOMBRE, ' (x', dv.CANTIDAD, ')') SEPARATOR ', ') as productos_vendidos
               FROM VENTAS v 
               INNER JOIN USUARIOS u ON v.IDUSUARIO = u.IDUSUARIO 
+              LEFT JOIN DETALLEVENTAS dv ON v.IDVENTA = dv.IDVENTA
+              LEFT JOIN PRODUCTOS p ON dv.IDPRODUCTO = p.IDPRODUCTO
+              GROUP BY v.IDVENTA
               ORDER BY v.FECHAREGISTRO DESC 
               LIMIT 10";
 $ventas = $db->query($sqlVentas)->fetchAll();
+
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -268,7 +273,6 @@ $ventas = $db->query($sqlVentas)->fetchAll();
                 
                 <div class="contenedor-botones">
                     <button type="submit" name="registrar_venta" class="btn-primary">Registrar Venta</button>
-                    <button type="button" onclick="limpiarFormulario()" class="btn-secondary">Limpiar</button>
                 </div>
             </form>
         </div>
@@ -286,6 +290,7 @@ $ventas = $db->query($sqlVentas)->fetchAll();
                             <th>ID</th>
                             <th>Tipo Doc.</th>
                             <th>Cliente</th>
+                            <th>Productos Vendidos</th>
                             <th>Total</th>
                             <th>Vendedor</th>
                             <th>Fecha</th>
@@ -297,6 +302,9 @@ $ventas = $db->query($sqlVentas)->fetchAll();
                                 <td><?php echo htmlspecialchars($venta['IDVENTA']); ?></td>
                                 <td><?php echo htmlspecialchars($venta['TIPODOCUMENTO'] ?? 'N/A'); ?></td>
                                 <td><?php echo htmlspecialchars($venta['NOMBRECLIENTE'] ?? 'N/A'); ?></td>
+                                <td style="max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="<?php echo htmlspecialchars($venta['productos_vendidos'] ?? 'N/A'); ?>">
+                                    <?php echo htmlspecialchars($venta['productos_vendidos'] ?? 'N/A'); ?>
+                                </td>
                                 <td class="total-destacado">
                                     $<?php echo number_format($venta['MONTOTOTAL'], 2); ?>
                                 </td>
