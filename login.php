@@ -61,16 +61,18 @@ if ($_POST) {
                 </div>
             </form>
             
-            <div class="info-adicional">
-                <p><strong>👤 Usuarios de prueba:</strong></p>
-                <p>📋 Doc: <strong>12345678</strong> | Pass: <strong>admin123</strong> (Administrador)</p>
-                <p>📋 Doc: <strong>87654321</strong> | Pass: <strong>empleado123</strong> (Empleado)</p>
-                <p>📋 Doc: <strong>11111111</strong> | Pass: <strong>maria123</strong> (Empleado)</p>
+            <!-- <div class="info-adicional">
+                <p><strong>👤 Usuarios disponibles:</strong></p>
+                <p>📋 Doc: <strong>12345678</strong> | Pass: <strong>1234</strong> (Administrador Principal)</p>
+                <p>📋 Doc: <strong>87654321</strong> | Pass: <strong>1234</strong> (Juan Pérez)</p>
+                <p>📋 Doc: <strong>11111111</strong> | Pass: <strong>1234</strong> (María González)</p>
+                <p>📋 Doc: <strong>99999999</strong> | Pass: <strong>1234</strong> (Usuario Test)</p>
+                <p>📋 Doc: <strong>88888888</strong> | Pass: <strong>1234</strong> (Usuario API)</p>
                 <br>
-                <p class="setup-link">
-                    ⚠️ Ejecutar primero: <a href="setup_users.php">setup_users.php</a>
+                <p class="info-note">
+                    ✅ Todos los usuarios tienen la contraseña: <strong>1234</strong>
                 </p>
-            </div>
+            </div> -->
         </div>
     </div>
 </body>

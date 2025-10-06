@@ -17,20 +17,12 @@ class Auth {
         $stmt = $this->db->query($sql, [$documento]);
         $user = $stmt->fetch();
         
-        // Debug temporal - eliminar después
         if (!$user) {
-            error_log("LOGIN DEBUG: Usuario no encontrado para documento: " . $documento);
             return false;
         }
         
-        error_log("LOGIN DEBUG: Usuario encontrado: " . $user['NOMBRECOMPLETO']);
-        error_log("LOGIN DEBUG: Hash en BD: " . substr($user['CLAVE'], 0, 20) . "...");
-        error_log("LOGIN DEBUG: Password ingresado: " . $password);
-        
-        $passwordMatch = password_verify($password, $user['CLAVE']);
-        error_log("LOGIN DEBUG: Password match: " . ($passwordMatch ? "SI" : "NO"));
-        
-        if ($passwordMatch) {
+        // Comparación directa de contraseña (sin hash)
+        if ($password === $user['CLAVE']) {
             // Crear sesión
             $_SESSION['user_id'] = $user['IDUSUARIO'];
             $_SESSION['documento'] = $user['DOCUMENTO'];

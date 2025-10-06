@@ -18,6 +18,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registrar_venta'])) {
         $numerodocumento = $_POST['numerodocumento'] ?? '';
         $documentocliente = $_POST['documentocliente'] ?? '';
         $nombrecliente = $_POST['nombrecliente'] ?? '';
+        $correocliente = $_POST['correocliente'] ?? '';
+        $telefonocliente = $_POST['telefonocliente'] ?? '';
         $montopago = floatval($_POST['montopago'] ?? 0);
         $productos = $_POST['productos'] ?? [];
         $cantidades = $_POST['cantidades'] ?? [];
@@ -70,6 +72,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registrar_venta'])) {
         // Iniciar transacción
         $db->getConnection()->beginTransaction();
         
+        // Verificar si el cliente existe, si no, crearlo automáticamente
+        $idcliente = null;
+        if (!empty($documentocliente)) {
+            $sqlCliente = "SELECT IDCLIENTE FROM CLIENTES WHERE DOCUMENTO = ? AND ESTADO = 'Activo'";
+            $cliente = $db->query($sqlCliente, [$documentocliente])->fetch();
+            
+            if (!$cliente) {
+                // Cliente no existe, registrarlo automáticamente
+                $sqlInsertCliente = "INSERT INTO CLIENTES (DOCUMENTO, NOMBRECOMPLETO, CORREO, TELEFONO, ESTADO, FECHAREGISTRO) 
+                                    VALUES (?, ?, ?, ?, 'Activo', NOW())";
+                $db->query($sqlInsertCliente, [$documentocliente, $nombrecliente, $correocliente, $telefonocliente]);
+                $idcliente = $db->getConnection()->lastInsertId();
+                
+                // Agregar mensaje informativo
+                $mensaje .= "Cliente registrado automáticamente. ";
+            } else {
+                $idcliente = $cliente['IDCLIENTE'];
+            }
+        }
+        
         // Insertar venta
         $sqlVenta = "INSERT INTO VENTAS (TIPODOCUMENTO, NUMERODOCUMENTO, DOCUMENTOCLIENTE, NOMBRECLIENTE, 
                      MONTOPAGO, MONTOCAMBIO, MONTOTOTAL, FECHAREGISTRO, IDUSUARIO) 
@@ -108,8 +130,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registrar_venta'])) {
         }
         
         $db->getConnection()->commit();
-        $mensaje = "Venta registrada exitosamente. Total: $" . number_format($montototal, 2) . 
-                  " - Cambio: $" . number_format($montocambio, 2);
+        $mensaje .= "Venta registrada exitosamente. Total: $" . number_format($montototal, 2) . 
+                   " - Cambio: $" . number_format($montocambio, 2);
         
         // Limpiar formulario
         $_POST = [];
@@ -143,94 +165,6 @@ $ventas = $db->query($sqlVentas)->fetchAll();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="CSS/style.css">
     <title>Ventas - Alisbook</title>
-    <style>
-        .venta-form {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-bottom: 15px;
-        }
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
-        .form-group label {
-            margin-bottom: 5px;
-            font-weight: bold;
-            color: #354edb;
-        }
-        .form-group input, .form-group select {
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 14px;
-        }
-        .productos-section {
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            padding: 15px;
-            margin: 15px 0;
-        }
-        .producto-item {
-            display: grid;
-            grid-template-columns: 2fr 1fr auto;
-            gap: 10px;
-            align-items: center;
-            padding: 10px;
-            border-bottom: 1px solid #eee;
-        }
-        .producto-item:last-child {
-            border-bottom: none;
-        }
-        .btn-primary {
-            background: #354edb;
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            margin-right: 10px;
-        }
-        .btn-secondary {
-            background: #6c757d;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .mensaje-exito {
-            background: #d4edda;
-            border: 1px solid #c3e6cb;
-            color: #155724;
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 15px;
-        }
-        .mensaje-error {
-            background: #f8d7da;
-            border: 1px solid #f5c6cb;
-            color: #721c24;
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 15px;
-        }
-        .total-venta {
-            font-size: 18px;
-            font-weight: bold;
-            color: #354edb;
-            text-align: right;
-            margin: 15px 0;
-        }
-    </style>
 </head>
 <body class="main-body">
     <header class="top-bar">
@@ -278,7 +212,19 @@ $ventas = $db->query($sqlVentas)->fetchAll();
                     </div>
                     <div class="form-group">
                         <label for="documentocliente">Documento del Cliente:</label>
-                        <input type="text" name="documentocliente" id="documentocliente" placeholder="DNI, RUC, etc.">
+                        <input type="text" name="documentocliente" id="documentocliente" placeholder="DNI, RUC, etc. (Si no existe, se registrará automáticamente)">
+                        <small style="color: #666; font-size: 0.9em;">.</small>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="correocliente">Correo del Cliente:</label>
+                        <input type="email" name="correocliente" id="correocliente" placeholder="correo@ejemplo.com (opcional)">
+                    </div>
+                    <div class="form-group">
+                        <label for="telefonocliente">Teléfono del Cliente:</label>
+                        <input type="tel" name="telefonocliente" id="telefonocliente" placeholder="123-456-7890 (opcional)">
                     </div>
                 </div>
                 
@@ -424,6 +370,9 @@ $ventas = $db->query($sqlVentas)->fetchAll();
             });
             document.getElementById('totalVenta').textContent = '0.00';
             document.getElementById('montocambio').value = '$0.00';
+            // Limpiar campos de cliente
+            document.getElementById('correocliente').value = '';
+            document.getElementById('telefonocliente').value = '';
         }
 
         // Validación del formulario

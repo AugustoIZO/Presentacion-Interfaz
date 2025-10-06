@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 04-10-2025 a las 21:43:31
+-- Tiempo de generación: 06-10-2025 a las 02:03:56
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -64,7 +64,9 @@ CREATE TABLE `clientes` (
 
 INSERT INTO `clientes` (`IDCLIENTE`, `DOCUMENTO`, `NOMBRECOMPLETO`, `CORREO`, `TELEFONO`, `ESTADO`, `FECHAREGISTRO`) VALUES
 (1, '11111111', 'María González', 'maria@email.com', '123456789', 'Activo', '2025-10-02 17:12:41'),
-(2, '22222222', 'Carlos López', 'carlos@email.com', '987654321', 'Activo', '2025-10-02 17:12:41');
+(2, '22222222', 'Carlos López', 'carlos@email.com', '987654321', 'Activo', '2025-10-02 17:12:41'),
+(3, '5066666', 'merentiel', NULL, NULL, 'Activo', '2025-10-05 20:56:55'),
+(4, '999000', 'Rodri', 'hola@gmail.com', '34100000', 'Activo', '2025-10-05 21:03:27');
 
 -- --------------------------------------------------------
 
@@ -83,20 +85,6 @@ CREATE TABLE `compras` (
   `IDFORMAPAGO` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Volcado de datos para la tabla `compras`
---
-
-INSERT INTO `compras` (`IDCOMPRA`, `TIPODOCUMENTO`, `NUMERODOCUMENTO`, `MONTOTOTAL`, `FECHAREGISTRO`, `IDUSUARIO`, `IDPROVEEDOR`, `IDFORMAPAGO`) VALUES
-(1, 'Factura', 'F001-00001', 1250.50, '2025-10-01 09:30:00', 4, 1, 1),
-(2, 'Boleta', 'B001-00001', 850.75, '2025-10-01 14:20:00', 5, 2, 2),
-(3, 'Factura', 'F001-00002', 2150.00, '2025-10-02 10:15:00', 4, 3, 3),
-(4, 'Factura', 'F001-00003', 675.25, '2025-10-02 16:45:00', 6, 4, 1),
-(5, 'Boleta', 'B001-00002', 1890.80, '2025-10-03 11:00:00', 5, 5, 4),
-(6, 'Factura', 'F001-00004', 3200.90, '2025-10-03 15:30:00', 4, 1, 2),
-(7, 'Boleta', 'B001-00003', 950.40, '2025-10-03 17:20:00', 6, 2, 1),
-(8, 'Factura', '11111', 305.00, '2025-10-04 16:04:15', 4, 2, 2);
-
 -- --------------------------------------------------------
 
 --
@@ -114,31 +102,6 @@ CREATE TABLE `detallecompras` (
   `IDCOMPRA` int(11) DEFAULT NULL,
   `IDPRODUCTO` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Volcado de datos para la tabla `detallecompras`
---
-
-INSERT INTO `detallecompras` (`IDDETALLECOMPRA`, `PRECIOVENTA`, `PRECIOCOMPRA`, `CANTIDAD`, `MONTOTOTAL`, `DESCRIPCION`, `FECHAREGISTRO`, `IDCOMPRA`, `IDPRODUCTO`) VALUES
-(1, 25.99, 20.00, 50, 1000.00, 'Libros clásicos de literatura - Edición especial tapa dura', '2025-10-01 09:30:00', 1, 1),
-(2, 22.50, 18.00, 10, 180.00, 'Libros de historia contemporánea - Formato estándar', '2025-10-01 09:30:00', 1, 3),
-(3, 1.20, 0.50, 150, 75.00, 'Bolígrafos azules de tinta gel - Paquete institucional', '2025-10-01 09:30:00', 1, 5),
-(4, 19.99, 15.00, 30, 450.00, 'Clásicos de la literatura española - Nueva edición', '2025-10-01 14:20:00', 2, 2),
-(5, 4.00, 2.50, 100, 250.00, 'Cuadernos universitarios A4 - 100 hojas rayadas', '2025-10-01 14:20:00', 2, 4),
-(6, 1.20, 0.50, 250, 125.00, 'Bolígrafos de colores variados - Material escolar', '2025-10-01 14:20:00', 2, 5),
-(7, 25.99, 20.00, 80, 1600.00, 'Literatura contemporánea - Colección completa', '2025-10-02 10:15:00', 3, 1),
-(8, 22.50, 18.00, 25, 450.00, 'Libros de ciencias sociales - Edición académica', '2025-10-02 10:15:00', 3, 3),
-(9, 4.00, 2.50, 25, 62.50, 'Cuadernos de apuntes A4 - Material de oficina', '2025-10-02 16:45:00', 4, 4),
-(10, 1.20, 0.50, 600, 300.00, 'Bolígrafos negros y azules - Compra mayorista', '2025-10-02 16:45:00', 4, 5),
-(11, 18.99, 12.50, 75, 937.50, 'Libros técnicos especializados - Nueva colección', '2025-10-03 11:00:00', 5, 8),
-(12, 25.00, 15.00, 40, 600.00, 'Literatura moderna - Edición de lujo', '2025-10-03 11:00:00', 5, 9),
-(13, 4.00, 2.50, 85, 212.50, 'Material de escritorio - Cuadernos profesionales', '2025-10-03 11:00:00', 5, 4),
-(14, 25.99, 20.00, 120, 2400.00, 'Gran compra de literatura clásica - Stock anual', '2025-10-03 15:30:00', 6, 1),
-(15, 22.50, 18.00, 45, 810.00, 'Libros académicos especializados - Edición universitaria', '2025-10-03 17:20:00', 7, 3),
-(16, 1.20, 0.50, 10, 5.00, NULL, '2025-10-04 16:04:15', 8, 5),
-(17, 4.00, 2.50, 10, 25.00, NULL, '2025-10-04 16:04:15', 8, 4),
-(18, 18.99, 12.50, 10, 125.00, NULL, '2025-10-04 16:04:15', 8, 8),
-(19, 25.00, 15.00, 10, 150.00, NULL, '2025-10-04 16:04:15', 8, 9);
 
 -- --------------------------------------------------------
 
@@ -167,7 +130,13 @@ INSERT INTO `detalleventas` (`IDDETALLEVENTA`, `PRECIOVENTA`, `CANTIDAD`, `SUBTO
 (4, 1.20, 50, 60.00, '2025-10-04 16:05:20', 5, 5),
 (5, 4.00, 50, 200.00, '2025-10-04 16:05:20', 5, 4),
 (6, 18.99, 20, 379.80, '2025-10-04 16:05:20', 5, 8),
-(7, 25.00, 20, 500.00, '2025-10-04 16:05:20', 5, 9);
+(7, 25.00, 20, 500.00, '2025-10-04 16:05:20', 5, 9),
+(8, 1.50, 1, 1.50, '2025-10-05 20:45:26', 6, 5),
+(9, 15.99, 1, 15.99, '2025-10-05 20:45:26', 6, 7),
+(10, 22.50, 1, 22.50, '2025-10-05 20:45:26', 6, 3),
+(11, 900.00, 1, 900.00, '2025-10-05 20:45:26', 6, 6),
+(12, 1.50, 20, 30.00, '2025-10-05 20:56:55', 7, 5),
+(13, 1.50, 5, 7.50, '2025-10-05 21:03:27', 8, 5);
 
 -- --------------------------------------------------------
 
@@ -229,11 +198,11 @@ CREATE TABLE `productos` (
 INSERT INTO `productos` (`IDPRODUCTO`, `CODIGO`, `NOMBRE`, `DESCRIPCION`, `STOCK`, `PRECIOCOMPRA`, `PRECIOVENTA`, `ESTADO`, `FECHAREGISTRO`, `IDCATEGORIA`) VALUES
 (1, 'LIB001', 'Cien años de soledad', 'Obra maestra de Gabriel García Márquez', 15, 20.00, 25.99, 'Inactivo', '2025-10-02 17:12:41', 1),
 (2, 'LIB002', 'El Quijote', 'Clásico de Miguel de Cervantes', 10, 15.00, 19.99, 'Inactivo', '2025-10-02 17:12:41', 1),
-(3, 'LIB003', 'Sapiens', 'Una breve historia de la humanidad - Yuval Noah Harari', 8, 18.00, 22.50, 'Activo', '2025-10-02 17:12:41', 1),
-(4, 'UTL001', 'Cuaderno A4', 'Cuaderno universitario 100 hojas', 8, 2.50, 4.00, 'Activo', '2025-10-02 17:12:41', 2),
-(5, 'UTL002', 'Bolígrafo', 'Bolígrafo azul de tinta gel', 38, 0.50, 1.20, 'Activo', '2025-10-02 17:12:41', 2),
-(6, '', 'Tito la champion liga', 'jojoj', 10, 70.00, 900.00, 'Activo', '2025-10-02 20:45:37', 1),
-(7, 'TEST001', 'Libro Test API', 'Libro para probar API corregida', 5, 10.00, 15.99, 'Activo', '2025-10-03 00:13:09', 1),
+(3, 'LIB003', 'Sapiens', 'Una breve historia de la humanidad - Yuval Noah Harari', 7, 18.00, 22.50, 'Activo', '2025-10-02 17:12:41', 1),
+(4, 'UTL001', 'Cuaderno A4', 'Cuaderno universitario 100 hojas', 8, 2.50, 4.00, 'Inactivo', '2025-10-02 17:12:41', 2),
+(5, 'UTL002', 'Bolígrafo', 'Bolígrafo azul de tinta gel', 12, 0.50, 1.50, 'Activo', '2025-10-02 17:12:41', 2),
+(6, '', 'Tito la champion liga', 'jojoj', 9, 70.00, 900.00, 'Activo', '2025-10-02 20:45:37', 1),
+(7, 'TEST001', 'Libro Test API', 'Libro para probar API corregida', 4, 10.00, 15.99, 'Activo', '2025-10-03 00:13:09', 1),
 (8, 'TESTFIX001', 'Libro Test Corregido', 'Libro con estructura correcta', 0, 12.50, 18.99, 'Activo', '2025-10-03 00:14:19', 1),
 (9, 'LIB999', 'Nuevo Libro', 'Descripción del libro', 0, 15.00, 25.00, 'Activo', '2025-10-03 00:16:18', 1);
 
@@ -306,11 +275,9 @@ CREATE TABLE `usuarios` (
 --
 
 INSERT INTO `usuarios` (`IDUSUARIO`, `DOCUMENTO`, `NOMBRECOMPLETO`, `CORREO`, `CLAVE`, `ESTADO`, `FECHAREGISTRO`, `IDROL`) VALUES
-(4, '12345678', 'Administrador Principal', 'admin@alisbook.com', '$2y$10$dQN6s9MtIHFrhp8T0o6R3.ssHG9rO8OMLPryQ2g7oiECLL9celmXO', 'Activo', '2025-10-02 17:13:47', 1),
-(5, '87654321', 'Juan Pérez', 'juan@alisbook.com', '$2y$10$X3XEbe5UsUp8jibQHy/Tquar4GXHFKNFvWxazjn.QoreV9COfkffC', 'Activo', '2025-10-02 17:13:47', 2),
-(6, '11111111', 'María González', 'maria@alisbook.com', '$2y$10$sTcl5PyuMSBVMRhF2UeXVuIOLGx6Ut1/PUQskX3pRRnfdlBrqrV5a', 'Activo', '2025-10-02 17:13:47', 2),
-(7, '99999999', 'Usuario Test API', 'test@api.com', 'test123', 'Activo', NULL, 2),
-(8, '88888888', 'Usuario API Corregido', 'corregido@api.com', 'password123', 'Activo', NULL, 2);
+(4, '12345678', 'Administrador Principal', 'admin@alisbook.com', '1234', 'Activo', '2025-10-02 17:13:47', 1),
+(5, '87654321', 'Juan Pérez', 'juan@alisbook.com', '1234', 'Activo', '2025-10-02 17:13:47', 2),
+(6, '11111111', 'María González', 'maria@alisbook.com', '1234', 'Activo', '2025-10-02 17:13:47', 2);
 
 -- --------------------------------------------------------
 
@@ -339,7 +306,10 @@ INSERT INTO `ventas` (`IDVENTA`, `TIPODOCUMENTO`, `NUMERODOCUMENTO`, `DOCUMENTOC
 (1, 'Factura', '11111', '46038933', 'Tito', 24.00, 0.00, 24.00, '2025-10-02 17:26:00', 5),
 (3, 'BOLETA', 'B001-003156', '', 'Cliente Test Corregido', 80.00, 4.50, 75.50, '2025-10-03 00:15:03', 4),
 (4, 'Boleta', '1231233', '46038933', 'guacho', 10.40, 0.00, 10.40, '2025-10-04 15:55:14', 4),
-(5, 'Boleta', '88888', '202022020', 'YOOO', 2500.00, 1360.20, 1139.80, '2025-10-04 16:05:20', 4);
+(5, 'Boleta', '88888', '202022020', 'YOOO', 2500.00, 1360.20, 1139.80, '2025-10-04 16:05:20', 4),
+(6, 'Ticket', '12122', '50000000', 'Martincito', 940.00, 0.01, 939.99, '2025-10-05 20:45:26', 4),
+(7, 'Boleta', '23213113132', '5066666', 'merentiel', 90.00, 60.00, 30.00, '2025-10-05 20:56:55', 4),
+(8, 'Boleta', '2222', '999000', 'Rodri', 7.50, 0.00, 7.50, '2025-10-05 21:03:27', 4);
 
 --
 -- Índices para tablas volcadas
@@ -442,7 +412,7 @@ ALTER TABLE `categorias`
 -- AUTO_INCREMENT de la tabla `clientes`
 --
 ALTER TABLE `clientes`
-  MODIFY `IDCLIENTE` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `IDCLIENTE` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `compras`
@@ -460,7 +430,7 @@ ALTER TABLE `detallecompras`
 -- AUTO_INCREMENT de la tabla `detalleventas`
 --
 ALTER TABLE `detalleventas`
-  MODIFY `IDDETALLEVENTA` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `IDDETALLEVENTA` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT de la tabla `formas_pago`
@@ -502,7 +472,7 @@ ALTER TABLE `usuarios`
 -- AUTO_INCREMENT de la tabla `ventas`
 --
 ALTER TABLE `ventas`
-  MODIFY `IDVENTA` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `IDVENTA` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- Restricciones para tablas volcadas

@@ -1689,6 +1689,232 @@ transition: 0.2s ease-in-out;
     box-shadow: 0 6px 20px rgba(53, 78, 219, 0.3);
 }
 
+/* ============================================ */
+/* ESTILOS PARA GESTIÓN DE PRODUCTOS */
+/* ============================================ */
+
+/* Controles de tabla */
+.controles-tabla {
+    margin-bottom: 15px;
+    padding: 15px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.filtro-estado label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+    color: #374151;
+    cursor: pointer;
+}
+
+.filtro-estado input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: #354edb;
+}
+
+/* Productos inactivos */
+.producto-inactivo {
+    background-color: #f8d7da !important;
+    opacity: 0.7;
+}
+
+.producto-inactivo:hover {
+    background-color: #f5c6cb !important;
+}
+
+/* Estados mejorados */
+.estado-activo {
+    color: #28a745;
+    font-weight: 600;
+    padding: 4px 8px;
+    background: #d4edda;
+    border-radius: 4px;
+    font-size: 0.85em;
+}
+
+.estado-inactivo {
+    color: #dc3545;
+    font-weight: 600;
+    padding: 4px 8px;
+    background: #f8d7da;
+    border-radius: 4px;
+    font-size: 0.85em;
+}
+
+/* Celda de acciones */
+.acciones-celda {
+    text-align: center;
+    white-space: nowrap;
+}
+
+/* Botones de acción */
+.btn-accion {
+    background: none;
+    border: none;
+    font-size: 1.1em;
+    cursor: pointer;
+    margin: 0 3px;
+    padding: 8px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    min-width: 36px;
+    height: 36px;
+}
+
+.btn-editar {
+    background: #17a2b8;
+    color: white;
+}
+
+.btn-editar:hover {
+    background: #138496;
+    transform: scale(1.1);
+}
+
+.btn-inactivar {
+    background: #dc3545;
+    color: white;
+}
+
+.btn-inactivar:hover {
+    background: #c82333;
+    transform: scale(1.1);
+}
+
+.btn-activar {
+    background: #28a745;
+    color: white;
+}
+
+.btn-activar:hover {
+    background: #218838;
+    transform: scale(1.1);
+}
+
+/* ============================================ */
+/* MODAL STYLES */
+/* ============================================ */
+
+.modal {
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    background-color: white;
+    margin: 3% auto;
+    padding: 0;
+    border-radius: 12px;
+    width: 85%;
+    max-width: 600px;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    animation: modalFadeIn 0.3s ease;
+}
+
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modal-header {
+    background: linear-gradient(135deg, #354edb, #5f78ff);
+    color: white;
+    padding: 20px;
+    border-radius: 12px 12px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-size: 1.3rem;
+    font-weight: 600;
+}
+
+.modal-close {
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: opacity 0.3s ease;
+    line-height: 1;
+}
+
+.modal-close:hover {
+    opacity: 0.7;
+}
+
+.modal form {
+    padding: 20px;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid #e9ecef;
+}
+
+/* Estilos específicos para formularios del modal */
+.modal .form-grid-2 {
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.modal .form-grid-3 {
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.modal .form-group-full {
+    margin-bottom: 12px;
+}
+
+/* Responsive para modales */
+@media (max-width: 768px) {
+    .modal-content {
+        width: 95%;
+        max-width: 95%;
+        margin: 2% auto;
+        max-height: 90vh;
+    }
+    
+    .modal form {
+        padding: 15px;
+    }
+    
+    .modal-actions {
+        flex-direction: column;
+        margin-top: 20px;
+    }
+    
+    .modal-actions button {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+}
+
 /* Header elements */
 .header-flex {
     display: flex;
@@ -1884,5 +2110,156 @@ transition: 0.2s ease-in-out;
 
 .setup-link a {
     color: #007cba;
+}
+
+/* ============================================ */
+/* VENTAS STYLES */
+/* ============================================ */
+
+.venta-form {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #354edb;
+}
+
+.form-group input, .form-group select {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.form-group input[type="email"] {
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23666"><path d="M20,8L12,13L4,8V6L12,11L20,6M20,4H4C2.89,4 2,4.89 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V6C2,4.89 21.1,4 20,4Z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    background-size: 16px;
+    padding-right: 30px;
+}
+
+.form-group input[type="tel"] {
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23666"><path d="M6.62,10.79C8.06,13.62 10.38,15.94 13.21,17.38L15.41,15.18C15.69,14.9 16.08,14.82 16.43,14.93C17.55,15.3 18.75,15.5 20,15.5A1,1 0 0,1 21,16.5V20A1,1 0 0,1 20,21A17,17 0 0,1 3,4A1,1 0 0,1 4,3H7.5A1,1 0 0,1 8.5,4C8.5,5.25 8.7,6.45 9.07,7.57C9.18,7.92 9.1,8.31 8.82,8.59L6.62,10.79Z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    background-size: 16px;
+    padding-right: 30px;
+}
+
+.productos-section {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 15px;
+    margin: 15px 0;
+}
+
+.producto-item {
+    display: grid;
+    grid-template-columns: 2fr 1fr auto;
+    gap: 10px;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.producto-item:last-child {
+    border-bottom: none;
+}
+
+.btn-primary {
+    background: #354edb;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-right: 10px;
+}
+
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.mensaje-exito {
+    background: #d4edda;
+    border: 1px solid #c3e6cb;
+    color: #155724;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+}
+
+.mensaje-error {
+    background: #f8d7da;
+    border: 1px solid #f5c6cb;
+    color: #721c24;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+}
+
+.total-venta {
+    font-size: 18px;
+    font-weight: bold;
+    color: #354edb;
+    text-align: right;
+    margin: 15px 0;
+}
+
+.campo-cambio {
+    font-weight: bold;
+    background-color: #f8f9fa;
+}
+
+.contenedor-botones {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.total-destacado {
+    font-weight: bold;
+    color: #354edb;
+}
+
+/* Responsive para ventas */
+@media (max-width: 768px) {
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .producto-item {
+        grid-template-columns: 1fr;
+        gap: 5px;
+    }
+    
+    .btn-primary, .btn-secondary {
+        width: 100%;
+        margin: 5px 0;
+    }
 }
 
