@@ -11,67 +11,6 @@ $user = $auth->getCurrentUser();
 $mensaje = '';
 $error = '';
 
-// Procesar formulario de agregar producto
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['agregar_producto'])) {
-    try {
-        $codigo = trim($_POST['codigo'] ?? '');
-        $nombre = trim($_POST['nombre'] ?? '');
-        $descripcion = trim($_POST['descripcion'] ?? '');
-        $stock = intval($_POST['stock'] ?? 0);
-        $preciocompra = floatval($_POST['preciocompra'] ?? 0);
-        $precioventa = floatval($_POST['precioventa'] ?? 0);
-        $idcategoria = intval($_POST['idcategoria'] ?? 0);
-        
-        // Validaciones
-        if (empty($nombre)) {
-            throw new Exception('El nombre del producto es requerido.');
-        }
-        
-        if ($stock < 0) {
-            throw new Exception('El stock no puede ser negativo.');
-        }
-        
-        if ($preciocompra < 0 || $precioventa < 0) {
-            throw new Exception('Los precios no pueden ser negativos.');
-        }
-        
-        if ($precioventa <= $preciocompra) {
-            throw new Exception('El precio de venta debe ser mayor al precio de compra.');
-        }
-        
-        // Verificar si el código ya existe
-        if (!empty($codigo)) {
-            $sqlCheck = "SELECT COUNT(*) FROM PRODUCTOS WHERE CODIGO = ? AND ESTADO = 'Activo'";
-            $count = $db->query($sqlCheck, [$codigo])->fetchColumn();
-            if ($count > 0) {
-                throw new Exception('Ya existe un producto con ese código.');
-            }
-        }
-        
-        // Insertar producto
-        $sqlInsert = "INSERT INTO PRODUCTOS (CODIGO, NOMBRE, DESCRIPCION, STOCK, PRECIOCOMPRA, PRECIOVENTA, ESTADO, FECHAREGISTRO, IDCATEGORIA) 
-                     VALUES (?, ?, ?, ?, ?, ?, 'Activo', NOW(), ?)";
-        
-        $db->query($sqlInsert, [$codigo, $nombre, $descripcion, $stock, $preciocompra, $precioventa, $idcategoria]);
-        
-        $mensaje = "Producto agregado exitosamente: " . htmlspecialchars($nombre);
-        
-        // Limpiar formulario
-        $_POST = [];
-        
-        // Recargar productos
-        $sql = "SELECT p.*, c.DESCRIPCION as categoria_nombre 
-                FROM PRODUCTOS p 
-                LEFT JOIN CATEGORIAS c ON p.IDCATEGORIA = c.IDCATEGORIA 
-                WHERE p.ESTADO = 'Activo' 
-                ORDER BY p.NOMBRE";
-        $productos = $db->query($sql)->fetchAll();
-        
-    } catch (Exception $e) {
-        $error = "Error al agregar el producto: " . $e->getMessage();
-    }
-}
-
 // Procesar cambio de estado de producto
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cambiar_estado'])) {
     try {
@@ -170,10 +109,6 @@ if ($sqlEstado === 'si') {
             ORDER BY p.NOMBRE";
 }
 $productos = $db->query($sql)->fetchAll();
-
-// Obtener categorías para el formulario
-$sqlCategorias = "SELECT * FROM CATEGORIAS WHERE ESTADO = 'Activo' ORDER BY DESCRIPCION";
-$categorias = $db->query($sqlCategorias)->fetchAll();
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -203,74 +138,11 @@ $categorias = $db->query($sqlCategorias)->fetchAll();
             <div class="mensaje-error"><?php echo $error; ?></div>
         <?php endif; ?>
 
-        <!-- Formulario para agregar productos -->
-        <div class="inventario-form">
-            <h3>
-                <span>➕ Agregar Nuevo Producto</span>
-                <button type="button" id="toggleForm" class="btn-toggle-form">
-                    Ocultar
-                </button>
-            </h3>
-            
-            <form method="POST" id="formAgregarProducto">
-                <div class="form-grid-2">
-                    <div>
-                        <label class="form-label">Código del Producto:</label>
-                        <input type="text" name="codigo" placeholder="Ej: LIB001" class="form-input">
-                        <small class="form-help-text">Opcional - Se puede dejar vacío</small>
-                    </div>
-                    <div>
-                        <label class="form-label">Nombre del Producto: *</label>
-                        <input type="text" name="nombre" required placeholder="Ej: Cien años de soledad" class="form-input">
-                    </div>
-                </div>
-                
-                <div class="form-group-full">
-                    <label class="form-label">Descripción:</label>
-                    <textarea name="descripcion" rows="3" placeholder="Descripción detallada del producto..." class="form-textarea"></textarea>
-                </div>
-                
-                <div class="form-grid-3">
-                    <div>
-                        <label class="form-label">Categoría: *</label>
-                        <select name="idcategoria" required class="form-select">
-                            <option value="">Seleccionar categoría</option>
-                            <?php foreach ($categorias as $categoria): ?>
-                                <option value="<?php echo $categoria['IDCATEGORIA']; ?>">
-                                    <?php echo htmlspecialchars($categoria['DESCRIPCION']); ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="form-label">Stock Inicial: *</label>
-                        <input type="number" name="stock" min="0" required placeholder="0" class="form-input">
-                    </div>
-                    <div>
-                        <label class="form-label">Precio de Compra: *</label>
-                        <input type="number" name="preciocompra" step="0.01" min="0" required placeholder="0.00" class="form-input">
-                    </div>
-                </div>
-                
-                <div class="form-group-full">
-                    <label class="form-label">Precio de Venta: *</label>
-                    <input type="number" name="precioventa" step="0.01" min="0" required placeholder="0.00" class="form-input">
-                    <small class="form-help-text">Debe ser mayor al precio de compra</small>
-                </div>
-                
-                <div class="contenedor-boton-volver">
-                    <button type="submit" name="agregar_producto" class="btn-success">
-                        ➕ Agregar Producto
-                    </button>
-                    <button type="button" onclick="limpiarFormulario()" class="btn-clean">
-                        🗑️ Limpiar
-                    </button>
-                </div>
-            </form>
-        </div>
-
         <div class="tabla-container">
-            <h2>Lista de Productos</h2>
+            <h2>Lista de Productos en Inventario</h2>
+            <p class="info-inventario">
+                ℹ️ Los productos se agregan automáticamente al inventario cuando realizas una compra en el módulo de <a href="compras.php" style="color: #4a90e2; text-decoration: underline;">Compras</a>.
+            </p>
             
             <!-- Controles adicionales -->
             <div class="controles-tabla">
@@ -581,12 +453,6 @@ $categorias = $db->query($sqlCategorias)->fetchAll();
             
             actualizarResultados(productosAMostrar.length);
         }
-
-        // Limpiar formulario
-        function limpiarFormulario() {
-            document.getElementById('formAgregarProducto').reset();
-        }
-
         // Función para editar producto
         function editarProducto(id) {
             // Buscar el producto en los datos de JavaScript
@@ -633,28 +499,6 @@ $categorias = $db->query($sqlCategorias)->fetchAll();
             document.getElementById('modalEditarProducto').style.display = 'none';
         }
 
-        // Validación en tiempo real de precios
-        function validarPrecios() {
-            const precioCompra = parseFloat(document.querySelector('input[name="preciocompra"]').value) || 0;
-            const precioVenta = parseFloat(document.querySelector('input[name="precioventa"]').value) || 0;
-            const submitBtn = document.querySelector('button[name="agregar_producto"]');
-            const precioVentaInput = document.querySelector('input[name="precioventa"]');
-
-            if (precioVenta > 0 && precioCompra > 0 && precioVenta <= precioCompra) {
-                precioVentaInput.style.borderColor = '#dc3545';
-                precioVentaInput.style.boxShadow = '0 0 0 2px rgba(220, 53, 69, 0.25)';
-                submitBtn.disabled = true;
-                submitBtn.style.background = '#6c757d';
-                submitBtn.title = 'El precio de venta debe ser mayor al precio de compra';
-            } else {
-                precioVentaInput.style.borderColor = '#ddd';
-                precioVentaInput.style.boxShadow = 'none';
-                submitBtn.disabled = false;
-                submitBtn.style.background = '#28a745';
-                submitBtn.title = '';
-            }
-        }
-
         // Inicializar cuando el DOM esté listo
         document.addEventListener('DOMContentLoaded', function() {
             // Cargar tabla inicial
@@ -664,67 +508,6 @@ $categorias = $db->query($sqlCategorias)->fetchAll();
             document.getElementById('buscadorProductos').addEventListener('input', filtrarProductos);
             document.getElementById('filtroCategoria').addEventListener('change', filtrarProductos);
             document.getElementById('filtroStock').addEventListener('change', filtrarProductos);
-
-            // Toggle mostrar/ocultar formulario
-            document.getElementById('toggleForm').addEventListener('click', function() {
-                const form = document.getElementById('formAgregarProducto');
-                const boton = this;
-                
-                if (form.style.display === 'none') {
-                    form.style.display = 'block';
-                    boton.textContent = 'Ocultar';
-                } else {
-                    form.style.display = 'none';
-                    boton.textContent = 'Mostrar';
-                }
-            });
-
-            // Validación en tiempo real de precios
-            const precioCompraInput = document.querySelector('input[name="preciocompra"]');
-            const precioVentaInput = document.querySelector('input[name="precioventa"]');
-            if (precioCompraInput) precioCompraInput.addEventListener('input', validarPrecios);
-            if (precioVentaInput) precioVentaInput.addEventListener('input', validarPrecios);
-
-            // Validación del formulario antes de enviar
-            document.getElementById('formAgregarProducto').addEventListener('submit', function(e) {
-                const nombre = document.querySelector('input[name="nombre"]').value.trim();
-                const categoria = document.querySelector('select[name="idcategoria"]').value;
-                const stock = parseInt(document.querySelector('input[name="stock"]').value) || 0;
-                const precioCompra = parseFloat(document.querySelector('input[name="preciocompra"]').value) || 0;
-                const precioVenta = parseFloat(document.querySelector('input[name="precioventa"]').value) || 0;
-
-                if (!nombre) {
-                    e.preventDefault();
-                    alert('El nombre del producto es requerido.');
-                    return false;
-                }
-
-                if (!categoria) {
-                    e.preventDefault();
-                    alert('Debe seleccionar una categoría.');
-                    return false;
-                }
-
-                if (stock < 0) {
-                    e.preventDefault();
-                    alert('El stock no puede ser negativo.');
-                    return false;
-                }
-
-                if (precioCompra <= 0) {
-                    e.preventDefault();
-                    alert('El precio de compra debe ser mayor a 0.');
-                    return false;
-                }
-
-                if (precioVenta <= precioCompra) {
-                    e.preventDefault();
-                    alert('El precio de venta debe ser mayor al precio de compra.');
-                    return false;
-                }
-
-                return confirm('¿Está seguro de agregar este producto al inventario?');
-            });
 
             // Validación del formulario de edición
             document.getElementById('formEditarProducto').addEventListener('submit', function(e) {

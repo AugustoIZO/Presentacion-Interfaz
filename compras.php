@@ -11,42 +11,64 @@ $user = $auth->getCurrentUser();
 $mensaje = '';
 $error = '';
 
-// Procesar nueva compra
+// Procesar nueva compra con creación automática de productos
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registrar_compra'])) {
     try {
         $tipodocumento = $_POST['tipodocumento'] ?? '';
         $numerodocumento = $_POST['numerodocumento'] ?? '';
         $idproveedor = intval($_POST['idproveedor'] ?? 0);
         $idformapago = intval($_POST['idformapago'] ?? 0);
-        $productos = $_POST['productos'] ?? [];
+        
+        // Datos de productos (arrays)
+        $nombres_productos = $_POST['nombres_productos'] ?? [];
+        $categorias_productos = $_POST['categorias_productos'] ?? [];
         $cantidades = $_POST['cantidades'] ?? [];
         $precioscompra = $_POST['precioscompra'] ?? [];
         $preciosventas = $_POST['preciosventas'] ?? [];
         
-        if (empty($productos) || $idproveedor == 0) {
-            throw new Exception('Debe seleccionar un proveedor y agregar al menos un producto.');
+        if ($idproveedor == 0) {
+            throw new Exception('Debe seleccionar un proveedor.');
+        }
+        
+        if (empty($nombres_productos)) {
+            throw new Exception('Debe agregar al menos un producto.');
         }
         
         // Calcular total y validar datos
         $montototal = 0;
         $detalles = [];
         
-        foreach ($productos as $index => $idproducto) {
-            if (empty($cantidades[$index]) || $cantidades[$index] <= 0) continue;
+        foreach ($nombres_productos as $index => $nombre_producto) {
+            $nombre_producto = trim($nombre_producto);
+            if (empty($nombre_producto)) continue;
             
-            $cantidad = intval($cantidades[$index]);
+            $idcategoria = intval($categorias_productos[$index] ?? 0);
+            $cantidad = intval($cantidades[$index] ?? 0);
             $preciocompra = floatval($precioscompra[$index] ?? 0);
             $precioventa = floatval($preciosventas[$index] ?? 0);
             
+            if ($cantidad <= 0) {
+                throw new Exception("La cantidad debe ser mayor a 0 para el producto: $nombre_producto");
+            }
+            
             if ($preciocompra <= 0) {
-                throw new Exception("El precio de compra debe ser mayor a 0.");
+                throw new Exception("El precio de compra debe ser mayor a 0 para el producto: $nombre_producto");
+            }
+            
+            if ($precioventa <= 0) {
+                throw new Exception("El precio de venta debe ser mayor a 0 para el producto: $nombre_producto");
+            }
+            
+            if ($idcategoria <= 0) {
+                throw new Exception("Debe seleccionar una categoría para el producto: $nombre_producto");
             }
             
             $subtotal = $preciocompra * $cantidad;
             $montototal += $subtotal;
             
             $detalles[] = [
-                'idproducto' => $idproducto,
+                'nombre' => $nombre_producto,
+                'idcategoria' => $idcategoria,
                 'cantidad' => $cantidad,
                 'preciocompra' => $preciocompra,
                 'precioventa' => $precioventa,
@@ -55,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registrar_compra'])) 
         }
         
         if (empty($detalles)) {
-            throw new Exception('Debe agregar al menos un producto con cantidad válida.');
+            throw new Exception('Debe agregar al menos un producto con datos válidos.');
         }
         
         // Iniciar transacción
@@ -76,9 +98,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registrar_compra'])) 
         
         $idcompra = $db->getConnection()->lastInsertId();
         
-        // Insertar detalles y actualizar stock/precios
+        // Procesar cada producto
         foreach ($detalles as $detalle) {
-            // Insertar detalle
+            // Buscar si el producto ya existe (por nombre y categoría)
+            $sqlBuscar = "SELECT IDPRODUCTO, STOCK FROM PRODUCTOS WHERE NOMBRE = ? AND IDCATEGORIA = ? AND ESTADO = 'Activo'";
+            $productoExistente = $db->query($sqlBuscar, [$detalle['nombre'], $detalle['idcategoria']])->fetch();
+            
+            if ($productoExistente) {
+                // Producto existe: actualizar stock y precios
+                $idproducto = $productoExistente['IDPRODUCTO'];
+                
+                $sqlUpdate = "UPDATE PRODUCTOS SET 
+                             STOCK = STOCK + ?, 
+                             PRECIOCOMPRA = ?, 
+                             PRECIOVENTA = ?
+                             WHERE IDPRODUCTO = ?";
+                $db->query($sqlUpdate, [
+                    $detalle['cantidad'], 
+                    $detalle['preciocompra'],
+                    $detalle['precioventa'], 
+                    $idproducto
+                ]);
+            } else {
+                // Producto NO existe: crear nuevo
+                $sqlInsert = "INSERT INTO PRODUCTOS (NOMBRE, DESCRIPCION, STOCK, PRECIOCOMPRA, PRECIOVENTA, ESTADO, FECHAREGISTRO, IDCATEGORIA) 
+                             VALUES (?, 'Producto agregado desde compra', ?, ?, ?, 'Activo', NOW(), ?)";
+                
+                $db->query($sqlInsert, [
+                    $detalle['nombre'],
+                    $detalle['cantidad'],
+                    $detalle['preciocompra'],
+                    $detalle['precioventa'],
+                    $detalle['idcategoria']
+                ]);
+                
+                $idproducto = $db->getConnection()->lastInsertId();
+            }
+            
+            // Insertar detalle de compra
             $sqlDetalle = "INSERT INTO DETALLECOMPRAS (PRECIOVENTA, PRECIOCOMPRA, CANTIDAD, MONTOTOTAL, FECHAREGISTRO, IDCOMPRA, IDPRODUCTO)
                           VALUES (?, ?, ?, ?, NOW(), ?, ?)";
             
@@ -88,31 +145,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['registrar_compra'])) 
                 $detalle['cantidad'],
                 $detalle['subtotal'],
                 $idcompra,
-                $detalle['idproducto']
-            ]);
-            
-            // Actualizar stock y precios del producto
-            $sqlUpdate = "UPDATE PRODUCTOS SET 
-                         STOCK = STOCK + ?, 
-                         PRECIOCOMPRA = ?, 
-                         PRECIOVENTA = ?
-                         WHERE IDPRODUCTO = ?";
-            $db->query($sqlUpdate, [
-                $detalle['cantidad'], 
-                $detalle['preciocompra'],
-                $detalle['precioventa'], 
-                $detalle['idproducto']
+                $idproducto
             ]);
         }
         
         $db->getConnection()->commit();
-        $mensaje = "Compra registrada exitosamente. Total: $" . number_format($montototal, 2);
+        $mensaje = "Compra registrada exitosamente. Total: $" . number_format($montototal, 2) . ". Los productos han sido agregados al inventario.";
         
         // Limpiar formulario
         $_POST = [];
         
     } catch (Exception $e) {
-        $db->getConnection()->rollBack();
+        if ($db->getConnection()->inTransaction()) {
+            $db->getConnection()->rollBack();
+        }
         $error = "Error al registrar la compra: " . $e->getMessage();
     }
 }
@@ -124,12 +170,8 @@ $proveedores = $db->query($sqlProveedores)->fetchAll();
 $sqlFormasPago = "SELECT * FROM FORMAS_PAGO ORDER BY TIPOPAGO";
 $formasPago = $db->query($sqlFormasPago)->fetchAll();
 
-$sqlProductos = "SELECT p.*, c.DESCRIPCION as categoria_nombre 
-                FROM PRODUCTOS p 
-                LEFT JOIN CATEGORIAS c ON p.IDCATEGORIA = c.IDCATEGORIA 
-                WHERE p.ESTADO = 'Activo' 
-                ORDER BY p.NOMBRE";
-$productos = $db->query($sqlProductos)->fetchAll();
+$sqlCategorias = "SELECT * FROM CATEGORIAS WHERE ESTADO = 'Activo' ORDER BY DESCRIPCION";
+$categorias = $db->query($sqlCategorias)->fetchAll();
 
 // Obtener compras recientes
 $sqlCompras = "SELECT c.*, p.RAZONSOCIAL as proveedor_nombre, u.NOMBRECOMPLETO as usuario_nombre, fp.TIPOPAGO
@@ -171,6 +213,9 @@ $compras = $db->query($sqlCompras)->fetchAll();
         <!-- Formulario de Nueva Compra -->
         <div class="compra-form">
             <h2>Registrar Nueva Compra</h2>
+            <p style="margin-bottom: 20px; color: #666;">
+                ℹ️ Ingresa los productos que estás comprando. Si el producto no existe, se creará automáticamente en el inventario.
+            </p>
             <form method="POST" id="compraForm">
                 <div class="form-row">
                     <div class="form-group">
@@ -190,7 +235,7 @@ $compras = $db->query($sqlCompras)->fetchAll();
                 
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="idproveedor">Proveedor:</label>
+                        <label for="idproveedor">Proveedor: *</label>
                         <select name="idproveedor" id="idproveedor" required>
                             <option value="">Seleccionar proveedor</option>
                             <?php foreach ($proveedores as $proveedor): ?>
@@ -201,7 +246,7 @@ $compras = $db->query($sqlCompras)->fetchAll();
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="idformapago">Forma de Pago:</label>
+                        <label for="idformapago">Forma de Pago: *</label>
                         <select name="idformapago" id="idformapago" required>
                             <option value="">Seleccionar forma de pago</option>
                             <?php foreach ($formasPago as $forma): ?>
@@ -214,41 +259,25 @@ $compras = $db->query($sqlCompras)->fetchAll();
                 </div>
                 
                 <div class="productos-section">
-                    <h3>Productos a Comprar</h3>
+                    <h3>Productos a Comprar <button type="button" onclick="agregarFilaProducto()" class="btn-add-producto">➕ Agregar Producto</button></h3>
                     <div class="productos-header">
-                        <span>Producto</span>
+                        <span style="flex: 2;">Nombre del Producto</span>
+                        <span style="flex: 1;">Categoría</span>
                         <span>Cantidad</span>
                         <span>Precio Compra</span>
                         <span>Precio Venta</span>
                         <span>Subtotal</span>
+                        <span>Acción</span>
                     </div>
                     <div id="productosContainer">
-                        <?php if (!empty($productos)): ?>
-                            <?php foreach ($productos as $index => $producto): ?>
-                                <div class="producto-item">
-                                    <div>
-                                        <label>
-                                            <input type="checkbox" name="productos[]" value="<?php echo $producto['IDPRODUCTO']; ?>" onchange="toggleProducto(this)">
-                                            <strong><?php echo htmlspecialchars($producto['NOMBRE']); ?></strong>
-                                            <br><small><?php echo htmlspecialchars($producto['categoria_nombre']); ?> - Stock actual: <?php echo $producto['STOCK']; ?></small>
-                                        </label>
-                                    </div>
-                                    <input type="number" name="cantidades[]" min="1" placeholder="Cant." disabled onchange="calcularTotal()">
-                                    <input type="number" name="precioscompra[]" step="0.01" min="0" placeholder="0.00" disabled onchange="calcularTotal()" value="<?php echo $producto['PRECIOCOMPRA']; ?>">
-                                    <input type="number" name="preciosventas[]" step="0.01" min="0" placeholder="0.00" disabled onchange="calcularTotal()" value="<?php echo $producto['PRECIOVENTA']; ?>">
-                                    <span class="subtotal">$0.00</span>
-                                </div>
-                            <?php endforeach; ?>
-                        <?php else: ?>
-                            <p>No hay productos disponibles.</p>
-                        <?php endif; ?>
+                        <!-- Las filas de productos se agregan dinámicamente con JS -->
                     </div>
                 </div>
                 
                 <div class="total-compra">
                     Total de la Compra: $<span id="totalCompra">0.00</span>
                 </div>
-                
+                                
                 <div class="contenedor-boton-volver">
                     <button type="submit" name="registrar_compra" class="btn-primary">Registrar Compra</button>
                     <button type="button" onclick="limpiarFormulario()" class="btn-secondary">Limpiar</button>
@@ -302,88 +331,124 @@ $compras = $db->query($sqlCompras)->fetchAll();
     </main>
 
     <script>
-        function toggleProducto(checkbox) {
-            const item = checkbox.closest('.producto-item');
-            const inputs = item.querySelectorAll('input[name="cantidades[]"], input[name="precioscompra[]"], input[name="preciosventas[]"]');
+        // Datos de categorías para el select dinámico
+        const categorias = <?php echo json_encode($categorias); ?>;
+        let contadorProductos = 0;
+
+        // Agregar una fila de producto
+        function agregarFilaProducto() {
+            contadorProductos++;
+            const container = document.getElementById('productosContainer');
             
-            inputs.forEach(input => {
-                input.disabled = !checkbox.checked;
-                if (!checkbox.checked) {
-                    input.value = input.name === 'cantidades[]' ? '' : input.defaultValue;
-                }
-            });
+            const fila = document.createElement('div');
+            fila.className = 'producto-item-dinamico';
+            fila.id = 'producto-' + contadorProductos;
             
-            calcularTotal();
+            fila.innerHTML = `
+                <input type="text" name="nombres_productos[]" placeholder="Nombre del producto" required style="flex: 2;">
+                <select name="categorias_productos[]" required style="flex: 1;">
+                    <option value="">Categoría</option>
+                    ${categorias.map(cat => `<option value="${cat.IDCATEGORIA}">${cat.DESCRIPCION}</option>`).join('')}
+                </select>
+                <input type="number" name="cantidades[]" min="1" placeholder="Cant." required onchange="calcularTotal()">
+                <input type="number" name="precioscompra[]" step="0.01" min="0.01" placeholder="P. Compra" required onchange="calcularTotal()">
+                <input type="number" name="preciosventas[]" step="0.01" min="0.01" placeholder="P. Venta" required onchange="calcularTotal()">
+                <span class="subtotal">$0.00</span>
+                <button type="button" onclick="eliminarProducto(${contadorProductos})" class="btn-eliminar">🗑️</button>
+            `;
+            
+            container.appendChild(fila);
         }
 
+        // Eliminar fila de producto
+        function eliminarProducto(id) {
+            const fila = document.getElementById('producto-' + id);
+            if (fila) {
+                fila.remove();
+                calcularTotal();
+            }
+        }
+
+        // Calcular total
         function calcularTotal() {
             let total = 0;
-            const productosItems = document.querySelectorAll('.producto-item');
+            const filas = document.querySelectorAll('.producto-item-dinamico');
             
-            productosItems.forEach(item => {
-                const checkbox = item.querySelector('input[type="checkbox"]');
-                const cantidadInput = item.querySelector('input[name="cantidades[]"]');
-                const precioInput = item.querySelector('input[name="precioscompra[]"]');
-                const subtotalSpan = item.querySelector('.subtotal');
+            filas.forEach(fila => {
+                const cantidad = parseFloat(fila.querySelector('input[name="cantidades[]"]').value) || 0;
+                const precioCompra = parseFloat(fila.querySelector('input[name="precioscompra[]"]').value) || 0;
+                const subtotalSpan = fila.querySelector('.subtotal');
                 
-                if (checkbox.checked && cantidadInput.value && precioInput.value) {
-                    const cantidad = parseInt(cantidadInput.value);
-                    const precio = parseFloat(precioInput.value);
-                    const subtotal = precio * cantidad;
-                    
-                    subtotalSpan.textContent = '$' + subtotal.toFixed(2);
-                    total += subtotal;
-                } else {
-                    subtotalSpan.textContent = '$0.00';
-                }
+                const subtotal = cantidad * precioCompra;
+                subtotalSpan.textContent = '$' + subtotal.toFixed(2);
+                total += subtotal;
             });
             
             document.getElementById('totalCompra').textContent = total.toFixed(2);
         }
 
+        // Limpiar formulario
         function limpiarFormulario() {
             document.getElementById('compraForm').reset();
-            document.querySelectorAll('input[name="cantidades[]"], input[name="precioscompra[]"], input[name="preciosventas[]"]').forEach(input => {
-                input.disabled = true;
-            });
-            document.querySelectorAll('.subtotal').forEach(span => {
-                span.textContent = '$0.00';
-            });
+            document.getElementById('productosContainer').innerHTML = '';
+            contadorProductos = 0;
             document.getElementById('totalCompra').textContent = '0.00';
         }
 
         // Validación del formulario
         document.getElementById('compraForm').addEventListener('submit', function(e) {
-            const productosSeleccionados = document.querySelectorAll('input[name="productos[]"]:checked');
+            const filas = document.querySelectorAll('.producto-item-dinamico');
             
-            if (productosSeleccionados.length === 0) {
+            if (filas.length === 0) {
                 e.preventDefault();
-                alert('Debe seleccionar al menos un producto para la compra.');
+                alert('Debe agregar al menos un producto para la compra.');
                 return false;
             }
-            
+
             let hayErrores = false;
-            productosSeleccionados.forEach(checkbox => {
-                const item = checkbox.closest('.producto-item');
-                const cantidadInput = item.querySelector('input[name="cantidades[]"]');
-                const precioInput = item.querySelector('input[name="precioscompra[]"]');
-                
-                if (!cantidadInput.value || parseInt(cantidadInput.value) <= 0) {
+            let mensajeError = '';
+
+            filas.forEach((fila, index) => {
+                const nombre = fila.querySelector('input[name="nombres_productos[]"]').value.trim();
+                const categoria = fila.querySelector('select[name="categorias_productos[]"]').value;
+                const cantidad = parseFloat(fila.querySelector('input[name="cantidades[]"]').value) || 0;
+                const precioCompra = parseFloat(fila.querySelector('input[name="precioscompra[]"]').value) || 0;
+                const precioVenta = parseFloat(fila.querySelector('input[name="preciosventas[]"]').value) || 0;
+
+                if (!nombre) {
                     hayErrores = true;
+                    mensajeError = `Producto ${index + 1}: El nombre es requerido.`;
                 }
-                
-                if (!precioInput.value || parseFloat(precioInput.value) <= 0) {
+                if (!categoria) {
                     hayErrores = true;
+                    mensajeError = `Producto ${index + 1}: Debe seleccionar una categoría.`;
+                }
+                if (cantidad <= 0) {
+                    hayErrores = true;
+                    mensajeError = `Producto ${index + 1}: La cantidad debe ser mayor a 0.`;
+                }
+                if (precioCompra <= 0) {
+                    hayErrores = true;
+                    mensajeError = `Producto ${index + 1}: El precio de compra debe ser mayor a 0.`;
+                }
+                if (precioVenta <= 0) {
+                    hayErrores = true;
+                    mensajeError = `Producto ${index + 1}: El precio de venta debe ser mayor a 0.`;
                 }
             });
-            
+
             if (hayErrores) {
                 e.preventDefault();
-                alert('Todos los productos seleccionados deben tener cantidad y precio válidos.');
+                alert(mensajeError);
                 return false;
             }
-            
-            return confirm('¿Está seguro de registrar esta compra?');
+
+            return confirm('¿Está seguro de registrar esta compra? Los productos se agregarán al inventario.');
+        });
+
+        // Agregar primera fila automáticamente
+        window.addEventListener('DOMContentLoaded', function() {
+            agregarFilaProducto();
         });
     </script>
 </body>

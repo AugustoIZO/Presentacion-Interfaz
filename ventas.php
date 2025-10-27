@@ -229,26 +229,34 @@ $ventas = $db->query($sqlVentas)->fetchAll();
                 </div>
                 
                 <div class="productos-section">
-                    <h3>Productos a Vender</h3>
-                    <div id="productosContainer">
-                        <?php if (!empty($productos)): ?>
-                            <?php foreach ($productos as $index => $producto): ?>
-                                <div class="producto-item">
-                                    <div>
-                                        <label>
-                                            <input type="checkbox" name="productos[]" value="<?php echo $producto['IDPRODUCTO']; ?>" onchange="toggleCantidad(this)">
-                                            <strong><?php echo htmlspecialchars($producto['NOMBRE']); ?></strong>
-                                            <br><small><?php echo htmlspecialchars($producto['categoria']); ?> - Stock: <?php echo $producto['STOCK']; ?> - Precio: $<?php echo number_format($producto['PRECIOVENTA'], 2); ?></small>
-                                        </label>
-                                    </div>
-                                    <input type="number" name="cantidades[]" min="1" max="<?php echo $producto['STOCK']; ?>" placeholder="Cant." disabled onchange="calcularTotal()">
-                                    <span class="subtotal">$0.00</span>
-                                </div>
-                            <?php endforeach; ?>
-                        <?php else: ?>
-                            <p>No hay productos disponibles para la venta.</p>
-                        <?php endif; ?>
+                    <h3>Productos Disponibles para Venta</h3>
+                    <?php if (empty($productos)): ?>
+                        <div class="info-inventario" style="background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%); border-left-color: #ffc107; color: #856404;">
+                            ⚠️ No hay productos disponibles para vender. Para agregar productos al inventario, ve al módulo de <a href="compras.php" style="color: #856404; font-weight: 600;">Compras</a>.
+                        </div>
+                    <?php else: ?>
+                    <!-- Buscador de productos -->
+                    <div class="buscador-ventas">
+                        <input type="text" id="buscadorProductosVentas" placeholder="🔍 Buscar producto por nombre o categoría..." onkeyup="filtrarProductosVentas()">
+                        <small style="color: #666; margin-left: 10px;">Total disponibles: <span id="contadorProductos"><?php echo count($productos); ?></span></small>
                     </div>
+                    
+                    <div id="productosContainer">
+                        <?php foreach ($productos as $index => $producto): ?>
+                            <div class="producto-item" data-nombre="<?php echo strtolower($producto['NOMBRE']); ?>" data-categoria="<?php echo strtolower($producto['categoria']); ?>">
+                                <div>
+                                    <label>
+                                        <input type="checkbox" name="productos[]" value="<?php echo $producto['IDPRODUCTO']; ?>" onchange="toggleCantidad(this)">
+                                        <strong><?php echo htmlspecialchars($producto['NOMBRE']); ?></strong>
+                                        <br><small><?php echo htmlspecialchars($producto['categoria']); ?> - Stock: <?php echo $producto['STOCK']; ?> - Precio: $<?php echo number_format($producto['PRECIOVENTA'], 2); ?></small>
+                                    </label>
+                                </div>
+                                <input type="number" name="cantidades[]" min="1" max="<?php echo $producto['STOCK']; ?>" placeholder="Cant." disabled onchange="calcularTotal()">
+                                <span class="subtotal">$0.00</span>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                    <?php endif; ?>
                 </div>
                 
                 <div class="total-venta">
@@ -373,6 +381,38 @@ $ventas = $db->query($sqlVentas)->fetchAll();
             // Limpiar campos de cliente
             document.getElementById('correocliente').value = '';
             document.getElementById('telefonocliente').value = '';
+            // Limpiar buscador
+            const buscador = document.getElementById('buscadorProductosVentas');
+            if (buscador) {
+                buscador.value = '';
+                filtrarProductosVentas();
+            }
+        }
+
+        // Función de filtrado de productos
+        function filtrarProductosVentas() {
+            const buscador = document.getElementById('buscadorProductosVentas');
+            const filtro = buscador.value.toLowerCase().trim();
+            const items = document.querySelectorAll('#productosContainer .producto-item');
+            let contador = 0;
+
+            items.forEach(item => {
+                const nombre = item.getAttribute('data-nombre') || '';
+                const categoria = item.getAttribute('data-categoria') || '';
+                
+                if (nombre.includes(filtro) || categoria.includes(filtro)) {
+                    item.style.display = '';
+                    contador++;
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+
+            // Actualizar contador
+            const contadorSpan = document.getElementById('contadorProductos');
+            if (contadorSpan) {
+                contadorSpan.textContent = contador;
+            }
         }
 
         // Validación del formulario
