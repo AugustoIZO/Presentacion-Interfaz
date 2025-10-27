@@ -2,8 +2,8 @@
 // Configuración de la base de datos
 define('DB_HOST', 'localhost');
 define('DB_USERNAME', 'root');
-define('DB_PASSWORD', ''); // Cambia esto por tu contraseña de MySQL
-define('DB_NAME', 'alisbook'); // Nombre de tu base de datos
+define('DB_PASSWORD', '');
+define('DB_NAME', 'alisbook');
 
 class Database {
     private $connection;

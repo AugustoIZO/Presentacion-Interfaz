@@ -90,7 +90,7 @@ if (isset($_GET['logout'])) {
     </main>
 
     <script>
-        // Animaciones mejoradas para las cards
+        // Animaciones
         document.querySelectorAll('.main-card[onclick]').forEach(card => {
             card.style.cursor = 'pointer';
             
