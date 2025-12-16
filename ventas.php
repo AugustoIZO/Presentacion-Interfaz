@@ -150,6 +150,21 @@ $sqlProductos = "SELECT p.*, c.DESCRIPCION as categoria
                 ORDER BY p.NOMBRE";
 $productos = $db->query($sqlProductos)->fetchAll();
 
+// Generar el siguiente número de documento automáticamente
+$sqlUltimoNumero = "SELECT NUMERODOCUMENTO FROM VENTAS ORDER BY IDVENTA DESC LIMIT 1";
+$ultimaVenta = $db->query($sqlUltimoNumero)->fetch();
+
+if ($ultimaVenta && !empty($ultimaVenta['NUMERODOCUMENTO'])) {
+    // Extraer el número del formato (ej: V-0001 -> 0001)
+    $ultimoNumero = $ultimaVenta['NUMERODOCUMENTO'];
+    preg_match('/\d+$/', $ultimoNumero, $matches);
+    $numero = isset($matches[0]) ? intval($matches[0]) + 1 : 1;
+} else {
+    $numero = 1;
+}
+
+$siguienteNumeroDocumento = 'V-' . str_pad($numero, 6, '0', STR_PAD_LEFT);
+
 // Obtener ventas recientes con detalles de productos
 $sqlVentas = "SELECT v.*, u.NOMBRECOMPLETO as usuario_nombre,
               GROUP_CONCAT(CONCAT(p.NOMBRE, ' (x', dv.CANTIDAD, ')') SEPARATOR ', ') as productos_vendidos
@@ -175,6 +190,7 @@ $ventas = $db->query($sqlVentas)->fetchAll();
     <header class="top-bar">
         <h1><a href="main.php" class="logo-link">💰 Ventas - Alisbook</a></h1>
         <div class="header-nav">
+            <a href="detalles_ventas.php">📋 Ver Detalles</a>
             <a href="main.php">🏠 Inicio</a>
             <span><?php echo htmlspecialchars($user['nombre']); ?></span>
             <a href="login.php?logout=1" class="logout">Cerrar sesión</a>
@@ -206,7 +222,10 @@ $ventas = $db->query($sqlVentas)->fetchAll();
                     </div>
                     <div class="form-group">
                         <label for="numerodocumento">Número de Documento:</label>
-                        <input type="text" name="numerodocumento" id="numerodocumento" placeholder="Ej: 001-001-0001">
+                        <input type="text" name="numerodocumento" id="numerodocumento" 
+                               value="<?php echo htmlspecialchars($siguienteNumeroDocumento); ?>" 
+                               readonly style="background-color: #f0f0f0;">
+                        <small style="color: #666; display: block; margin-top: 5px;">📋 Generado automáticamente</small>
                     </div>
                 </div>
                 
@@ -243,12 +262,12 @@ $ventas = $db->query($sqlVentas)->fetchAll();
                     <!-- Buscador de productos -->
                     <div class="buscador-ventas">
                         <input type="text" id="buscadorProductosVentas" placeholder="🔍 Buscar producto por nombre o categoría..." onkeyup="filtrarProductosVentas()">
-                        <small style="color: #666; margin-left: 10px;">Total disponibles: <span id="contadorProductos"><?php echo count($productos); ?></span></small>
+                        <small style="color: #666; margin-left: 10px;"><span id="mensajeProductos"><?php echo count($productos); ?> productos disponibles</span></small>
                     </div>
                     
                     <div id="productosContainer">
                         <?php foreach ($productos as $index => $producto): ?>
-                            <div class="producto-item" data-nombre="<?php echo strtolower($producto['NOMBRE']); ?>" data-categoria="<?php echo strtolower($producto['categoria']); ?>">
+                            <div class="producto-item" data-nombre="<?php echo strtolower($producto['NOMBRE']); ?>" data-categoria="<?php echo strtolower($producto['categoria']); ?>" data-precio="<?php echo $producto['PRECIOVENTA']; ?>" data-index="<?php echo $index; ?>" style="<?php echo $index >= 5 ? 'display: none;' : ''; ?>">
                                 <div>
                                     <label>
                                         <input type="checkbox" name="productos[]" value="<?php echo $producto['IDPRODUCTO']; ?>" onchange="toggleCantidad(this)">
@@ -352,7 +371,8 @@ $ventas = $db->query($sqlVentas)->fetchAll();
                 const subtotalSpan = item.querySelector('.subtotal');
                 
                 if (checkbox.checked && cantidadInput.value) {
-                    const precio = parseFloat(checkbox.closest('label').textContent.match(/\$(\d+\.?\d*)/)[1]);
+                    // Obtener el precio del atributo data-precio del contenedor
+                    const precio = parseFloat(item.getAttribute('data-precio'));
                     const cantidad = parseInt(cantidadInput.value);
                     const subtotal = precio * cantidad;
                     
@@ -402,24 +422,37 @@ $ventas = $db->query($sqlVentas)->fetchAll();
             const buscador = document.getElementById('buscadorProductosVentas');
             const filtro = buscador.value.toLowerCase().trim();
             const items = document.querySelectorAll('#productosContainer .producto-item');
+            const totalProductos = items.length;
             let contador = 0;
+            const hayFiltro = filtro !== '';
 
             items.forEach(item => {
                 const nombre = item.getAttribute('data-nombre') || '';
                 const categoria = item.getAttribute('data-categoria') || '';
+                const index = parseInt(item.getAttribute('data-index'));
                 
                 if (nombre.includes(filtro) || categoria.includes(filtro)) {
-                    item.style.display = '';
-                    contador++;
+                    // Si hay filtro, mostrar todos los que coincidan
+                    // Si no hay filtro, mostrar solo los primeros 5
+                    if (hayFiltro || index < 5) {
+                        item.style.display = '';
+                        contador++;
+                    } else {
+                        item.style.display = 'none';
+                    }
                 } else {
                     item.style.display = 'none';
                 }
             });
 
-            // Actualizar contador
-            const contadorSpan = document.getElementById('contadorProductos');
-            if (contadorSpan) {
-                contadorSpan.textContent = contador;
+            // Actualizar mensaje
+            const mensajeSpan = document.getElementById('mensajeProductos');
+            if (mensajeSpan) {
+                if (!hayFiltro) {
+                    mensajeSpan.textContent = `${totalProductos} productos disponibles`;
+                } else {
+                    mensajeSpan.textContent = `Mostrando ${contador} de ${totalProductos} productos`;
+                }
             }
         }
 

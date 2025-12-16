@@ -141,7 +141,7 @@ $productos = $db->query($sql)->fetchAll();
         <div class="tabla-container">
             <h2>Lista de Productos en Inventario</h2>
             <p class="info-inventario">
-                ℹ️ Los productos se agregan automáticamente al inventario cuando realizas una compra en el módulo de <a href="compras.php" style="color: #4a90e2; text-decoration: underline;">Compras</a>.
+                ℹ️ Mostrando los últimos 5 productos agregados. Usa los filtros para buscar productos específicos. Los productos se agregan automáticamente al inventario cuando realizas una compra en el módulo de <a href="compras.php" style="color: #4a90e2; text-decoration: underline;">Compras</a>.
             </p>
             
             <!-- Controles adicionales -->
@@ -342,12 +342,16 @@ $productos = $db->query($sql)->fetchAll();
         // Datos de productos desde PHP
         const productos = <?php echo json_encode($productos); ?>;
         let productosFiltrados = [...productos];
+        let hayFiltrosActivos = false;
 
         // Función de filtrado
         function filtrarProductos() {
             const textoBusqueda = document.getElementById('buscadorProductos').value.toLowerCase();
             const categoriaSeleccionada = document.getElementById('filtroCategoria').value;
             const stockSeleccionado = document.getElementById('filtroStock').value;
+            
+            // Detectar si hay algún filtro activo
+            hayFiltrosActivos = textoBusqueda !== '' || categoriaSeleccionada !== '' || stockSeleccionado !== '';
             
             productosFiltrados = productos.filter(producto => {
                 // Filtro por texto (nombre, código, descripción, categoría)
@@ -382,7 +386,9 @@ $productos = $db->query($sql)->fetchAll();
             const totalProductos = productos.length;
             const resultadosDiv = document.getElementById('resultadosBusqueda');
             
-            if (cantidad === totalProductos) {
+            if (!hayFiltrosActivos) {
+                resultadosDiv.textContent = `Mostrando los últimos 5 de ${totalProductos} productos`;
+            } else if (cantidad === totalProductos) {
                 resultadosDiv.textContent = `Mostrando todos los ${totalProductos} productos`;
             } else {
                 resultadosDiv.textContent = `Mostrando ${cantidad} de ${totalProductos} productos`;
@@ -394,6 +400,7 @@ $productos = $db->query($sql)->fetchAll();
             document.getElementById('buscadorProductos').value = '';
             document.getElementById('filtroCategoria').value = '';
             document.getElementById('filtroStock').value = '';
+            hayFiltrosActivos = false;
             productosFiltrados = [...productos];
             renderizarTabla();
         }
@@ -402,12 +409,19 @@ $productos = $db->query($sql)->fetchAll();
         function renderizarTabla(productosAMostrar = productosFiltrados) {
             const tbody = document.getElementById('tablaProductosBody');
             
-            if (productosAMostrar.length === 0) {
+            // Si no hay filtros activos, limitar a 5 productos
+            let productosLimitados = productosAMostrar;
+            if (!hayFiltrosActivos) {
+                productosLimitados = productosAMostrar.slice(0, 5);
+            }
+            
+            if (productosLimitados.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="11" class="sin-resultados">No se encontraron productos que coincidan con los filtros.</td></tr>';
+                actualizarResultados(0);
                 return;
             }
             
-            tbody.innerHTML = productosAMostrar.map(producto => `
+            tbody.innerHTML = productosLimitados.map(producto => `
                 <tr class="${producto.ESTADO === 'Inactivo' ? 'producto-inactivo' : ''}">
                     <td>${producto.IDPRODUCTO}</td>
                     <td>${producto.CODIGO || ''}</td>
@@ -451,7 +465,7 @@ $productos = $db->query($sql)->fetchAll();
                 </tr>
             `).join('');
             
-            actualizarResultados(productosAMostrar.length);
+            actualizarResultados(productosLimitados.length);
         }
         // Función para editar producto
         function editarProducto(id) {

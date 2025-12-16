@@ -45,6 +45,10 @@ if (isset($_GET['logout'])) {
                 <h3>💰 Ventas</h3>
                 <p>Registrar y gestionar ventas</p>
             </div>
+            <div class="main-card" onclick="location.href='detalles_ventas.php'">
+                <h3>📋 Detalles de Ventas</h3>
+                <p>Ver historial y detalles de ventas</p>
+            </div>
             <div class="main-card" onclick="location.href='compras.php'">
                 <h3>🛒 Compras</h3>
                 <p>Comprar productos a proveedores</p>
@@ -53,6 +57,12 @@ if (isset($_GET['logout'])) {
                 <h3>📊 Reportes</h3>
                 <p>Estadísticas y análisis de datos</p>
             </div>
+            <?php if ($user['rol'] === 'Administrador'): ?>
+            <div class="main-card" onclick="location.href='usuarios.php'">
+                <h3>👤 Usuarios</h3>
+                <p>Gestionar empleados del sistema</p>
+            </div>
+            <?php endif; ?>
         </div>
 
         <div class="resumen">

@@ -21,13 +21,29 @@ class Auth {
             return false;
         }
         
-        // Comparación directa de contraseña (sin hash)
-        if ($password === $user['CLAVE']) {
+        // Verificar contraseña hasheada
+        // Soporta también contraseñas sin hashear para compatibilidad temporal
+        if (password_verify($password, $user['CLAVE'])) {
+            // Contraseña hasheada correcta
             $_SESSION['user_id'] = $user['IDUSUARIO'];
             $_SESSION['documento'] = $user['DOCUMENTO'];
             $_SESSION['nombre'] = $user['NOMBRECOMPLETO'];
             $_SESSION['rol'] = $user['ROL'];
             $_SESSION['logged_in'] = true;
+            
+            return true;
+        } elseif ($password === $user['CLAVE']) {
+            // Compatibilidad con contraseñas sin hashear (actualizar automáticamente)
+            $_SESSION['user_id'] = $user['IDUSUARIO'];
+            $_SESSION['documento'] = $user['DOCUMENTO'];
+            $_SESSION['nombre'] = $user['NOMBRECOMPLETO'];
+            $_SESSION['rol'] = $user['ROL'];
+            $_SESSION['logged_in'] = true;
+            
+            // Actualizar la contraseña a formato hasheado
+            $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+            $updateSql = "UPDATE USUARIOS SET CLAVE = ? WHERE IDUSUARIO = ?";
+            $this->db->query($updateSql, [$hashedPassword, $user['IDUSUARIO']]);
             
             return true;
         }

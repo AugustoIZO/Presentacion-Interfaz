@@ -173,6 +173,21 @@ $formasPago = $db->query($sqlFormasPago)->fetchAll();
 $sqlCategorias = "SELECT * FROM CATEGORIAS WHERE ESTADO = 'Activo' ORDER BY DESCRIPCION";
 $categorias = $db->query($sqlCategorias)->fetchAll();
 
+// Generar el siguiente número de documento automáticamente
+$sqlUltimoNumero = "SELECT NUMERODOCUMENTO FROM COMPRAS ORDER BY IDCOMPRA DESC LIMIT 1";
+$ultimaCompra = $db->query($sqlUltimoNumero)->fetch();
+
+if ($ultimaCompra && !empty($ultimaCompra['NUMERODOCUMENTO'])) {
+    // Extraer el número del formato (ej: C-0001 -> 0001)
+    $ultimoNumero = $ultimaCompra['NUMERODOCUMENTO'];
+    preg_match('/\d+$/', $ultimoNumero, $matches);
+    $numero = isset($matches[0]) ? intval($matches[0]) + 1 : 1;
+} else {
+    $numero = 1;
+}
+
+$siguienteNumeroDocumento = 'C-' . str_pad($numero, 6, '0', STR_PAD_LEFT);
+
 // Obtener compras recientes
 $sqlCompras = "SELECT c.*, p.RAZONSOCIAL as proveedor_nombre, u.NOMBRECOMPLETO as usuario_nombre, fp.TIPOPAGO
               FROM COMPRAS c 
@@ -229,7 +244,10 @@ $compras = $db->query($sqlCompras)->fetchAll();
                     </div>
                     <div class="form-group">
                         <label for="numerodocumento">Número de Documento:</label>
-                        <input type="text" name="numerodocumento" id="numerodocumento" placeholder="Ej: 001-001-0001">
+                        <input type="text" name="numerodocumento" id="numerodocumento" 
+                               value="<?php echo htmlspecialchars($siguienteNumeroDocumento); ?>" 
+                               readonly style="background-color: #f0f0f0;">
+                        <small style="color: #666; display: block; margin-top: 5px;">📋 Generado automáticamente</small>
                     </div>
                 </div>
                 
