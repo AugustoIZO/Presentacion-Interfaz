@@ -47,8 +47,10 @@
 1. **📦 Inventario** - Gestión de productos
 2. **🛒 Compras** - Registro de compras a proveedores
 3. **💰 Ventas** - Procesamiento de ventas
-4. **👥 Clientes** - Gestión de clientes
-5. **📊 Reportes** - Estadísticas y análisis
+4. **📋 Detalles de ventas** - Ver historial y detalles de ventas
+5. **👥 Clientes** - Gestión de clientes
+6. **📊 Reportes** - Estadísticas y análisis
+7. **👤 Usuarios** - Gestionar empleados del sistema
 
 #### Características:
 - ✅ Logo clickeable que retorna al dashboard desde cualquier módulo
@@ -261,6 +263,85 @@ Cambio = Monto Pagado - Total
 
 ---
 
+📋 MÓDULO DE DETALLES DE VENTAS
+
+### Historial y Detalles de Ventas (detalles_ventas.php)
+
+**Funcionalidad**: Consulta avanzada del historial de ventas, con filtros, estadísticas y visualización detallada de los productos vendidos en cada operación.
+
+**Características Principales**:
+
+- ✅ Visualización de ventas recientes (últimas 5 sin filtros)
+- ✅ Búsqueda avanzada con múltiples filtros
+- ✅ Despliegue dinámico de productos por venta
+- ✅ Estadísticas automáticas
+- ✅ Acceso solo a usuarios autenticados
+
+#### 1.Filtros de Búsqueda
+
+Filtros disponibles:
+
+- Fecha inicio
+- Fecha fin
+- Nombre del cliente
+- Número de documento de venta
+
+Comportamiento:
+
+- Sin filtros → muestra las últimas 5 ventas
+- Con filtros → muestra todas las ventas coincidentes
+- Incluye botón Buscar y botón Limpiar filtros.
+
+#### 2.Estadísticas de Ventas
+
+Se calculan automáticamente según los resultados mostrados:
+
+- Total de ventas
+- Monto total vendido
+- Promedio por venta
+
+#### 3.Listado de Ventas
+
+Cada venta se muestra en formato de tarjeta interactiva con:
+
+Información resumida:
+- ID de la venta
+- Tipo de documento (Boleta / Factura / Ticket)
+- Número de documento
+- Monto total
+
+Información detallada:
+- Cliente
+- Documento del cliente
+- Vendedor
+- Fecha y hora
+- Monto pagado
+- Cambio entregado
+
+#### 4.Detalle de Productos Vendidos
+
+Al hacer clic sobre una venta se despliega el detalle:
+
+Columnas mostradas:
+- Código del producto
+- Nombre del producto
+- Categoría
+- Precio unitario
+- Cantidad vendida
+- Subtotal
+
+Características:
+- Animación de despliegue
+- Ícono visual para indicar apertura/cierre
+- Consulta dinámica a la tabla DETALLEVENTAS
+
+Validaciones y Seguridad:
+- Sesión activa obligatoria
+- Protección contra accesos no autenticados
+- Consultas con filtros preparados (PDO)
+
+---
+
 ## 👥 MÓDULO DE CLIENTES
 
 ### Gestión de Clientes (clientes.php)
@@ -336,6 +417,84 @@ Formulario con campos:
 ##### 5. Compras por Período:
 - Similar a ventas
 - Agrupado por proveedor
+
+---
+
+👤 MÓDULO DE USUARIOS
+
+### Gestión de Usuarios / Empleados (usuarios.php)
+
+**Funcionalidad**: Administración de usuarios empleados del sistema (solo accesible por administradores).
+
+#### 1.Control de Acceso
+
+- ✅ Solo usuarios con rol Administrador
+- ❌ Usuarios comunes son redirigidos al dashboard
+
+#### 2.Listado de Usuarios
+
+Muestra únicamente usuarios con rol Empleado.
+
+Columnas:
+
+- ID
+- Documento
+- Nombre completo
+- Correo electrónico
+- Rol
+- Estado (Activo / Inactivo)
+- Fecha de registro
+- Acciones
+
+#### 3.Registro de Nuevos Usuarios
+
+Modal “Agregar Nuevo Empleado”
+
+Campos:
+
+- Documento (obligatorio, único)
+- Nombre completo (obligatorio)
+- Correo electrónico (opcional)
+- Contraseña (obligatoria)
+
+Características:
+
+- Contraseña hasheada con **password_hash()**
+- Estado inicial: Activo
+- Rol asignado automáticamente: Empleado
+
+#### 4.Edición de Usuarios
+
+Modal “Editar Empleado”
+
+Permite:
+
+- Modificar documento
+- Modificar nombre
+- Modificar correo
+- Cambiar contraseña (opcional)
+- Si la contraseña se deja vacía, no se modifica.
+
+#### 5.Activar / Desactivar Usuarios
+
+- ❌ No se eliminan usuarios físicamente
+- ✅ Se cambia el estado a Inactivo
+- ✅ Posibilidad de reactivar usuarios
+- Confirmación previa para desactivar
+
+#### 6.Mensajes del Sistema:
+
+- ✅ Usuario agregado correctamente
+- ❌ Documento duplicado
+- ❌ Error al guardar cambios
+- ✅ Usuario activado / desactivado
+
+#### 7.Seguridad:
+
+- Uso de sesiones PHP
+- Control de roles
+- Formularios protegidos
+- Validaciones backend
 
 ---
 
