@@ -60,7 +60,9 @@ $stockBajo = $db->query("
         <h1><a href="main.php" class="logo-link">📊 Reportes - Alisbook</a></h1>
         <div class="header-nav">
             <a href="main.php">🏠 Inicio</a>
-            <span><?php echo htmlspecialchars($user['nombre']); ?></span>
+            <a href="perfil.php" style="color: white; text-decoration: none;" title="Ver mi perfil">
+                👤 <?php echo htmlspecialchars($user['nombre']); ?>
+            </a>
             <a href="login.php?logout=1" class="logout">Cerrar sesión</a>
         </div>
     </header>

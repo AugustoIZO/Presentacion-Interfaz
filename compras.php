@@ -211,7 +211,9 @@ $compras = $db->query($sqlCompras)->fetchAll();
         <h1><a href="main.php" class="logo-link">🛒 Compras - Alisbook</a></h1>
         <div class="header-nav">
             <a href="main.php">🏠 Inicio</a>
-            <span><?php echo htmlspecialchars($user['nombre']); ?></span>
+            <a href="perfil.php" style="color: white; text-decoration: none;" title="Ver mi perfil">
+                👤 <?php echo htmlspecialchars($user['nombre']); ?>
+            </a>
             <a href="login.php?logout=1" class="logout">Cerrar sesión</a>
         </div>
     </header>
@@ -262,6 +264,15 @@ $compras = $db->query($sqlCompras)->fetchAll();
                                 </option>
                             <?php endforeach; ?>
                         </select>
+                        <?php if (empty($proveedores)): ?>
+                            <small style="color: #dc3545; display: block; margin-top: 5px;">
+                                ⚠️ No hay proveedores registrados. <a href="proveedores.php" style="color: #354edb; font-weight: bold;">Agregar proveedor</a>
+                            </small>
+                        <?php else: ?>
+                            <small style="color: #666; display: block; margin-top: 5px;">
+                                📋 <a href="proveedores.php" style="color: #354edb; text-decoration: none;">Gestionar proveedores</a>
+                            </small>
+                        <?php endif; ?>
                     </div>
                     <div class="form-group">
                         <label for="idformapago">Forma de Pago: *</label>
@@ -278,6 +289,9 @@ $compras = $db->query($sqlCompras)->fetchAll();
                 
                 <div class="productos-section">
                     <h3>Productos a Comprar <button type="button" onclick="agregarFilaProducto()" class="btn-add-producto">➕ Agregar Producto</button></h3>
+                    <small style="display: block; margin-bottom: 15px; color: #666;">
+                        💡 Si no encuentras la categoría que necesitas, puedes <a href="categorias.php" target="_blank" style="color: #354edb; font-weight: bold;">gestionarlas aquí</a>.
+                    </small>
                     <div class="productos-header">
                         <span style="flex: 2;">Nombre del Producto</span>
                         <span style="flex: 1;">Categoría</span>

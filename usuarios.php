@@ -26,8 +26,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $nombre = $_POST['nombre'] ?? '';
         $correo = $_POST['correo'] ?? '';
         $clave = $_POST['clave'] ?? '';
+        $idrol = intval($_POST['idrol'] ?? 2);
         
-        if (!empty($documento) && !empty($nombre) && !empty($clave)) {
+        if (!empty($documento) && !empty($nombre) && !empty($clave) && $idrol > 0) {
             // Verificar si el documento ya existe
             $sqlCheck = "SELECT COUNT(*) as total FROM USUARIOS WHERE DOCUMENTO = ?";
             $count = $db->query($sqlCheck, [$documento])->fetch()['total'];
@@ -39,9 +40,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 // Hashear la contraseña
                 $claveHasheada = password_hash($clave, PASSWORD_DEFAULT);
                 $sql = "INSERT INTO USUARIOS (DOCUMENTO, NOMBRECOMPLETO, CORREO, CLAVE, ESTADO, FECHAREGISTRO, IDROL) 
-                        VALUES (?, ?, ?, ?, 'Activo', NOW(), 2)";
-                if ($db->query($sql, [$documento, $nombre, $correo, $claveHasheada])) {
-                    $mensaje = "Usuario empleado agregado exitosamente.";
+                        VALUES (?, ?, ?, ?, 'Activo', NOW(), ?)";
+                if ($db->query($sql, [$documento, $nombre, $correo, $claveHasheada, $idrol])) {
+                    $mensaje = "Usuario agregado exitosamente.";
                     $tipoMensaje = 'success';
                 } else {
                     $mensaje = "Error al agregar usuario.";
@@ -60,18 +61,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $nombre = $_POST['nombre'] ?? '';
         $correo = $_POST['correo'] ?? '';
         $clave = $_POST['clave'] ?? '';
+        $idrol = intval($_POST['idrol'] ?? 2);
         
-        if (!empty($idUsuario) && !empty($documento) && !empty($nombre)) {
+        if (!empty($idUsuario) && !empty($documento) && !empty($nombre) && $idrol > 0) {
             if (!empty($clave)) {
                 // Hashear la nueva contraseña
                 $claveHasheada = password_hash($clave, PASSWORD_DEFAULT);
                 // Actualizar con nueva contraseña
-                $sql = "UPDATE USUARIOS SET DOCUMENTO = ?, NOMBRECOMPLETO = ?, CORREO = ?, CLAVE = ? WHERE IDUSUARIO = ?";
-                $params = [$documento, $nombre, $correo, $claveHasheada, $idUsuario];
+                $sql = "UPDATE USUARIOS SET DOCUMENTO = ?, NOMBRECOMPLETO = ?, CORREO = ?, CLAVE = ?, IDROL = ? WHERE IDUSUARIO = ?";
+                $params = [$documento, $nombre, $correo, $claveHasheada, $idrol, $idUsuario];
             } else {
                 // Actualizar sin cambiar contraseña
-                $sql = "UPDATE USUARIOS SET DOCUMENTO = ?, NOMBRECOMPLETO = ?, CORREO = ? WHERE IDUSUARIO = ?";
-                $params = [$documento, $nombre, $correo, $idUsuario];
+                $sql = "UPDATE USUARIOS SET DOCUMENTO = ?, NOMBRECOMPLETO = ?, CORREO = ?, IDROL = ? WHERE IDUSUARIO = ?";
+                $params = [$documento, $nombre, $correo, $idrol, $idUsuario];
             }
             
             if ($db->query($sql, $params)) {
@@ -116,11 +118,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Obtener usuarios con rol de empleado (IDROL = 2)
+// Obtener todos los roles disponibles
+$sqlRoles = "SELECT * FROM ROLES ORDER BY DESCRIPCION";
+$roles = $db->query($sqlRoles)->fetchAll();
+
+// Obtener todos los usuarios (excluyendo administradores si es necesario, o mostrando todos)
 $sql = "SELECT u.*, r.DESCRIPCION as ROL 
         FROM USUARIOS u 
         INNER JOIN ROLES r ON u.IDROL = r.IDROL 
-        WHERE u.IDROL = 2 
         ORDER BY u.ESTADO DESC, u.NOMBRECOMPLETO";
 $usuarios = $db->query($sql)->fetchAll();
 ?>
@@ -177,12 +182,27 @@ $usuarios = $db->query($sql)->fetchAll();
             font-weight: bold;
         }
         
-        .form-group input {
+        .form-group input,
+        .form-group select {
             width: 100%;
             padding: 10px;
             border: 1px solid #ddd;
             border-radius: 4px;
             box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+        }
+        
+        .form-group select {
+            cursor: pointer;
+            background-color: white;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #354edb;
+            box-shadow: 0 0 0 2px rgba(53, 78, 219, 0.2);
         }
         
         .btn-group {
@@ -315,14 +335,16 @@ $usuarios = $db->query($sql)->fetchAll();
         <h1><a href="main.php" class="logo-link">👥 Gestión de Usuarios - Alisbook</a></h1>
         <div class="header-nav">
             <a href="main.php">🏠 Inicio</a>
-            <span><?php echo htmlspecialchars($user['nombre']); ?></span>
+            <a href="perfil.php" style="color: white; text-decoration: none;" title="Ver mi perfil">
+                👤 <?php echo htmlspecialchars($user['nombre']); ?>
+            </a>
             <a href="login.php?logout=1" class="logout">Cerrar sesión</a>
         </div>
     </header>
 
     <main class="main-content">
         <div class="tabla-container">
-            <h2>Gestión de Empleados</h2>
+            <h2>Gestión de Usuarios del Sistema</h2>
             
             <?php if (!empty($mensaje)): ?>
                 <div class="mensaje <?php echo $tipoMensaje; ?>">
@@ -330,10 +352,10 @@ $usuarios = $db->query($sql)->fetchAll();
                 </div>
             <?php endif; ?>
             
-            <button class="btn-agregar" onclick="abrirModalAgregar()">➕ Agregar Nuevo Empleado</button>
+            <button class="btn-agregar" onclick="abrirModalAgregar()">➕ Agregar Nuevo Usuario</button>
             
             <?php if (empty($usuarios)): ?>
-                <p>No hay usuarios empleados registrados.</p>
+                <p>No hay usuarios registrados.</p>
             <?php else: ?>
                 <table>
                     <thead>
@@ -400,7 +422,7 @@ $usuarios = $db->query($sql)->fetchAll();
     <div id="modalAgregar" class="modal">
         <div class="modal-content">
             <span class="close" onclick="cerrarModalAgregar()">&times;</span>
-            <h3>Agregar Nuevo Empleado</h3>
+            <h3>Agregar Nuevo Usuario</h3>
             <form method="POST">
                 <input type="hidden" name="accion" value="agregar">
                 
@@ -420,6 +442,21 @@ $usuarios = $db->query($sql)->fetchAll();
                 </div>
                 
                 <div class="form-group">
+                    <label for="idrol">Rol *</label>
+                    <select id="idrol" name="idrol" required>
+                        <option value="">Seleccionar rol</option>
+                        <?php foreach ($roles as $rol): ?>
+                            <option value="<?php echo $rol['IDROL']; ?>" <?php echo $rol['IDROL'] == 2 ? 'selected' : ''; ?>>
+                                <?php echo htmlspecialchars($rol['DESCRIPCION']); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                    <small style="color: #666; display: block; margin-top: 5px;">
+                        ℹ️ <strong>Administrador:</strong> acceso completo | <strong>Empleado:</strong> acceso limitado
+                    </small>
+                </div>
+                
+                <div class="form-group">
                     <label for="clave">Contraseña *</label>
                     <input type="password" id="clave" name="clave" required>
                 </div>
@@ -436,7 +473,7 @@ $usuarios = $db->query($sql)->fetchAll();
     <div id="modalEditar" class="modal">
         <div class="modal-content">
             <span class="close" onclick="cerrarModalEditar()">&times;</span>
-            <h3>Editar Empleado</h3>
+            <h3>Editar Usuario</h3>
             <form method="POST">
                 <input type="hidden" name="accion" value="editar">
                 <input type="hidden" id="edit_id_usuario" name="id_usuario">
@@ -454,6 +491,21 @@ $usuarios = $db->query($sql)->fetchAll();
                 <div class="form-group">
                     <label for="edit_correo">Correo Electrónico</label>
                     <input type="email" id="edit_correo" name="correo">
+                </div>
+                
+                <div class="form-group">
+                    <label for="edit_idrol">Rol *</label>
+                    <select id="edit_idrol" name="idrol" required>
+                        <option value="">Seleccionar rol</option>
+                        <?php foreach ($roles as $rol): ?>
+                            <option value="<?php echo $rol['IDROL']; ?>">
+                                <?php echo htmlspecialchars($rol['DESCRIPCION']); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                    <small style="color: #666; display: block; margin-top: 5px;">
+                        ℹ️ <strong>Administrador:</strong> acceso completo | <strong>Empleado:</strong> acceso limitado
+                    </small>
                 </div>
                 
                 <div class="form-group">
@@ -483,6 +535,7 @@ $usuarios = $db->query($sql)->fetchAll();
             document.getElementById('edit_documento').value = usuario.DOCUMENTO;
             document.getElementById('edit_nombre').value = usuario.NOMBRECOMPLETO;
             document.getElementById('edit_correo').value = usuario.CORREO || '';
+            document.getElementById('edit_idrol').value = usuario.IDROL;
             document.getElementById('edit_clave').value = '';
             document.getElementById('modalEditar').style.display = 'block';
         }

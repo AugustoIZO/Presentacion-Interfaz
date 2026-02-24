@@ -2638,3 +2638,36 @@ transition: 0.2s ease-in-out;
     margin-top: 0;
 }
 
+/* ============================================ */
+/* ESTILOS PARA FORMULARIO DE PROVEEDORES */
+/* ============================================ */
+
+.form-container {
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.form-container h2 {
+    margin-top: 0;
+    color: #354edb;
+    margin-bottom: 20px;
+    font-size: 1.5rem;
+}
+
+.form-registro {
+    width: 100%;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-start;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.form-actions button {
+    min-width: 200px;
+}

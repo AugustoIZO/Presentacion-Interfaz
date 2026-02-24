@@ -192,7 +192,9 @@ $ventas = $db->query($sqlVentas)->fetchAll();
         <div class="header-nav">
             <a href="detalles_ventas.php">📋 Ver Detalles</a>
             <a href="main.php">🏠 Inicio</a>
-            <span><?php echo htmlspecialchars($user['nombre']); ?></span>
+            <a href="perfil.php" style="color: white; text-decoration: none;" title="Ver mi perfil">
+                👤 <?php echo htmlspecialchars($user['nombre']); ?>
+            </a>
             <a href="login.php?logout=1" class="logout">Cerrar sesión</a>
         </div>
     </header>
@@ -491,7 +493,10 @@ $ventas = $db->query($sqlVentas)->fetchAll();
                 return false;
             }
             
-            return confirm('¿Está seguro de registrar esta venta?');
+            if (!confirm('¿Está seguro de registrar esta venta?')) {
+                e.preventDefault();
+                return false;
+            }
         });
     </script>
 </body>

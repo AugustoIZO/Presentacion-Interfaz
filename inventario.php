@@ -123,7 +123,9 @@ $productos = $db->query($sql)->fetchAll();
         <h1><a href="main.php" class="logo-link">📦 Inventario - Alisbook</a></h1>
         <div class="header-flex">
             <a href="main.php" class="header-link">🏠 Inicio</a>
-            <span><?php echo htmlspecialchars($user['nombre']); ?></span>
+            <a href="perfil.php" style="color: white; text-decoration: none;" title="Ver mi perfil">
+                👤 <?php echo htmlspecialchars($user['nombre']); ?>
+            </a>
             <a href="login.php?logout=1" class="logout">Cerrar sesión</a>
         </div>
     </header>
@@ -141,7 +143,7 @@ $productos = $db->query($sql)->fetchAll();
         <div class="tabla-container">
             <h2>Lista de Productos en Inventario</h2>
             <p class="info-inventario">
-                ℹ️ Mostrando los últimos 5 productos agregados. Usa los filtros para buscar productos específicos. Los productos se agregan automáticamente al inventario cuando realizas una compra en el módulo de <a href="compras.php" style="color: #4a90e2; text-decoration: underline;">Compras</a>.
+                ℹ️ Mostrando los últimos 5 productos agregados. Usa los filtros para buscar productos específicos. Los productos se agregan automáticamente al inventario cuando realizas una compra en el módulo de <a href="compras.php" style="color: #4a90e2; text-decoration: underline;">Compras</a>. Puedes gestionar las <a href="categorias.php" style="color: #4a90e2; text-decoration: underline; font-weight: bold;">Categorías</a> para organizar tus productos.
             </p>
             
             <!-- Controles adicionales -->
@@ -331,6 +333,9 @@ $productos = $db->query($sql)->fetchAll();
         </form>
             
             <div class="contenedor-volver">
+                <button onclick="location.href='categorias.php'" class="btn-primary" style="margin-right: 10px;">
+                    📁 Gestionar Categorías
+                </button>
                 <button onclick="location.href='main.php'" class="btn-volver-main">
                     Volver al Menú Principal
                 </button>

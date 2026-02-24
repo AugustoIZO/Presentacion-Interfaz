@@ -25,8 +25,12 @@ if (isset($_GET['logout'])) {
     <header class="top-bar">
         <h1><a href="main.php" class="logo-link">📚 Alisbook</a></h1>
         <div class="header-nav">
-            <span>Bienvenido, <?php echo htmlspecialchars($user['nombre']); ?> 
-                (<?php echo ucfirst($user['rol']); ?>)</span>
+            <a href="perfil.php" style="color: white; text-decoration: none; transition: opacity 0.3s;" 
+               onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'"
+               title="Ver mi perfil">
+                👤 <?php echo htmlspecialchars($user['nombre']); ?> 
+                (<?php echo ucfirst($user['rol']); ?>)
+            </a>
             <a href="?logout=1" class="logout">Cerrar sesión</a>
         </div>
     </header>
@@ -37,9 +41,17 @@ if (isset($_GET['logout'])) {
                 <h3>📦 Inventario</h3>
                 <p>Gestionar productos y controlar stock</p>
             </div>
+            <div class="main-card" onclick="location.href='categorias.php'">
+                <h3>📁 Categorías</h3>
+                <p>Gestionar categorías de productos</p>
+            </div>
             <div class="main-card" onclick="location.href='clientes.php'">
                 <h3>👥 Clientes</h3>
                 <p>Administrar información de clientes</p>
+            </div>
+            <div class="main-card" onclick="location.href='proveedores.php'">
+                <h3>🏭 Proveedores</h3>
+                <p>Gestionar proveedores y distribuidores</p>
             </div>
             <div class="main-card" onclick="location.href='ventas.php'">
                 <h3>💰 Ventas</h3>
@@ -57,9 +69,13 @@ if (isset($_GET['logout'])) {
                 <h3>📊 Reportes</h3>
                 <p>Estadísticas y análisis de datos</p>
             </div>
+            <div class="main-card" onclick="location.href='perfil.php'">
+                <h3>👤 Mi Perfil</h3>
+                <p>Ver y editar mi información personal</p>
+            </div>
             <?php if ($user['rol'] === 'Administrador'): ?>
             <div class="main-card" onclick="location.href='usuarios.php'">
-                <h3>👤 Usuarios</h3>
+                <h3>👥 Usuarios</h3>
                 <p>Gestionar empleados del sistema</p>
             </div>
             <?php endif; ?>
@@ -74,6 +90,7 @@ if (isset($_GET['logout'])) {
             // Obtener estadísticas
             $totalVentas = $db->query("SELECT COUNT(*) as total FROM VENTAS")->fetch()['total'];
             $clientesActivos = $db->query("SELECT COUNT(*) as total FROM CLIENTES WHERE ESTADO = 'Activo'")->fetch()['total'];
+            $proveedoresActivos = $db->query("SELECT COUNT(*) as total FROM PROVEEDORES WHERE ESTADO = 'Activo'")->fetch()['total'];
             $productosStock = $db->query("SELECT COUNT(*) as total FROM PRODUCTOS WHERE STOCK > 0 AND ESTADO = 'Activo'")->fetch()['total'];
             $ingresosMes = $db->query("SELECT COALESCE(SUM(MONTOTOTAL), 0) as total FROM VENTAS WHERE MONTH(FECHAREGISTRO) = MONTH(CURRENT_DATE()) AND YEAR(FECHAREGISTRO) = YEAR(CURRENT_DATE())")->fetch()['total'];
             ?>
@@ -86,6 +103,10 @@ if (isset($_GET['logout'])) {
                 <div class="stat-card">
                     <h4>Clientes Activos</h4>
                     <span class="stat-number"><?php echo $clientesActivos; ?></span>
+                </div>
+                <div class="stat-card">
+                    <h4>Proveedores Activos</h4>
+                    <span class="stat-number"><?php echo $proveedoresActivos; ?></span>
                 </div>
                 <div class="stat-card">
                     <h4>Productos en Stock</h4>

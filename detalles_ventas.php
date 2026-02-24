@@ -86,7 +86,9 @@ $promedioVenta = $totalVentas > 0 ? $montoTotalGeneral / $totalVentas : 0;
         <div class="header-nav">
             <a href="ventas.php">💰 Nueva Venta</a>
             <a href="main.php">🏠 Inicio</a>
-            <span><?php echo htmlspecialchars($user['nombre']); ?></span>
+            <a href="perfil.php" style="color: white; text-decoration: none;" title="Ver mi perfil">
+                👤 <?php echo htmlspecialchars($user['nombre']); ?>
+            </a>
             <a href="login.php?logout=1" class="logout">Cerrar sesión</a>
         </div>
     </header>
