@@ -240,7 +240,6 @@ $compras = $db->query($sqlCompras)->fetchAll();
                         <select name="tipodocumento" id="tipodocumento" required>
                             <option value="">Seleccionar</option>
                             <option value="Factura">Factura</option>
-                            <option value="Boleta">Boleta</option>
                             <option value="Recibo">Recibo</option>
                         </select>
                     </div>
@@ -290,7 +289,7 @@ $compras = $db->query($sqlCompras)->fetchAll();
                 <div class="productos-section">
                     <h3>Productos a Comprar <button type="button" onclick="agregarFilaProducto()" class="btn-add-producto">➕ Agregar Producto</button></h3>
                     <small style="display: block; margin-bottom: 15px; color: #666;">
-                        💡 Si no encuentras la categoría que necesitas, puedes <a href="categorias.php" target="_blank" style="color: #354edb; font-weight: bold;">gestionarlas aquí</a>.
+                        💡 Si no encontras la categoría que necesitas, podes <a href="categorias.php" target="_blank" style="color: #354edb; font-weight: bold;">gestionarlas aca</a>.
                     </small>
                     <div class="productos-header">
                         <span style="flex: 2;">Nombre del Producto</span>
