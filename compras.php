@@ -310,7 +310,7 @@ $compras = $db->query($sqlCompras)->fetchAll();
                 </div>
                                 
                 <div class="contenedor-boton-volver">
-                    <button type="submit" name="registrar_compra" class="btn-primary">Registrar Compra</button>
+                    <button type="button" onclick="validarYEnviar()" class="btn-primary">Registrar Compra</button>
                     <button type="button" onclick="limpiarFormulario()" class="btn-secondary">Limpiar</button>
                 </div>
             </form>
@@ -426,12 +426,11 @@ $compras = $db->query($sqlCompras)->fetchAll();
             document.getElementById('totalCompra').textContent = '0.00';
         }
 
-        // Validación del formulario
-        document.getElementById('compraForm').addEventListener('submit', function(e) {
+        // Función para validar y enviar el formulario
+        function validarYEnviar() {
             const filas = document.querySelectorAll('.producto-item-dinamico');
             
             if (filas.length === 0) {
-                e.preventDefault();
                 alert('Debe agregar al menos un producto para la compra.');
                 return false;
             }
@@ -469,13 +468,22 @@ $compras = $db->query($sqlCompras)->fetchAll();
             });
 
             if (hayErrores) {
-                e.preventDefault();
                 alert(mensajeError);
                 return false;
             }
 
-            return confirm('¿Está seguro de registrar esta compra? Los productos se agregarán al inventario.');
-        });
+            // Confirmar antes de enviar
+            if (confirm('¿Está seguro de registrar esta compra? Los productos se agregarán al inventario.')) {
+                // Agregar el campo registrar_compra antes de enviar
+                const form = document.getElementById('compraForm');
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'registrar_compra';
+                input.value = '1';
+                form.appendChild(input);
+                form.submit();
+            }
+        }
 
         // Agregar primera fila automáticamente
         window.addEventListener('DOMContentLoaded', function() {

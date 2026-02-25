@@ -65,6 +65,10 @@ if (isset($_GET['logout'])) {
                 <h3>🛒 Compras</h3>
                 <p>Comprar productos a proveedores</p>
             </div>
+            <div class="main-card" onclick="location.href='detalles_compras.php'">
+                <h3>📋 Detalles de Compras</h3>
+                <p>Ver historial y detalles de compras</p>
+            </div>
             <div class="main-card" onclick="location.href='reportes.php'">
                 <h3>📊 Reportes</h3>
                 <p>Estadísticas y análisis de datos</p>
